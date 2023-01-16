@@ -21,10 +21,12 @@ function showSalary() {
 
 function setDarkMode() {
     document.documentElement.dataset.theme = 'dark';
+    localStorage.setItem('irpf-theme', 'dark');
 }
 
 function setLightMode() {
     document.documentElement.dataset.theme = 'light';
+    localStorage.setItem('irpf-theme', 'light');
 }
 
 function toggleTheme() {
@@ -38,6 +40,12 @@ function toggleTheme() {
 }
 
 async function load() {
+
+    if(localStorage.getItem('irpf-theme')){
+        document.documentElement.dataset.theme = localStorage.getItem('irpf-theme');
+    } 
+
+
     await SalaryCalculator.load();
 
     const footer = document.querySelector('footer');
