@@ -13,6 +13,10 @@ export class SalaryCalculator {
 
     static calcWithTaxes(salary) {
 
+        if(salary <= 0){
+            return 0;
+        }
+
         if(IRPF_RANGES === undefined || TAXES === undefined) {
             throw new Error("IRPF_RANGES or TAXES are undefined, please load the data first");
         }
@@ -27,6 +31,11 @@ export class SalaryCalculator {
     }
 
     static extraPayment(salary) {
+
+        if(salary <= 0){
+            return 0;
+        }
+
         if(IRPF_RANGES === undefined || TAXES === undefined) {
             throw new Error("IRPF_RANGES or TAXES are undefined, please load the data first");
         }
@@ -41,6 +50,10 @@ export class SalaryCalculator {
      * @returns {number} The irpf value
      */
     static getIrpf(salary) {
+
+        if(salary <= 0){
+            return 0;
+        }
 
         let irpf = undefined;
         
@@ -64,6 +77,11 @@ export class SalaryCalculator {
      * @returns {number} The irpf value calculated on the salary and the payment number
      */
     static getIrpfValue(salary) {
+
+        if(salary <= 0){
+            return 0;
+        }
+
         return (salary * (SalaryCalculator.getIrpf(salary) / 100)) / PAYMENT_NUMBER;
     }
 
@@ -73,6 +91,11 @@ export class SalaryCalculator {
      * @returns {number} The contingencias comunes value calculated on the salary and the payment number
      */
     static getContingenciasComunesValue(salary) {
+
+        if(salary <= 0){
+            return 0;
+        }
+
         return (salary * (TAXES.CONTINGENCIAS_COMUNES / 100)) / PAYMENT_NUMBER_TAXES;
     }
 
@@ -82,6 +105,11 @@ export class SalaryCalculator {
      * @returns {number} The atur value calculated on the salary and the payment number
      */
     static getAturValue(salary) {
+        
+        if(salary <= 0){
+            return 0;
+        }
+
         return (salary * (TAXES.ATUR / 100)) / PAYMENT_NUMBER_TAXES;
     }
 
@@ -91,6 +119,11 @@ export class SalaryCalculator {
      * @returns {number} The fp value calculated on the salary and the payment number
      */
     static getFpValue(salary) {
+
+        if(salary <= 0){
+            return 0;
+        }
+        
         return (salary * (TAXES.FP / 100)) / PAYMENT_NUMBER_TAXES;
     }
 
