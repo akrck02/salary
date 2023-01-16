@@ -1,2 +1,3 @@
 # IRPFCalculator
-A simple IRPF calculator
+
+A Simple IRPF Calculator for Spain made in Javascript.
