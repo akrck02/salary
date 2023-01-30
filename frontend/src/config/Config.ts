@@ -44,6 +44,7 @@ export class Config {
     };
 
     public static VIEWS = {
+        CALC: "../app/#/calc/",
         BASE_URL: "../app/#/",
         HOME: "../app/#/home/",
         ERROR: "../app/#/error/",

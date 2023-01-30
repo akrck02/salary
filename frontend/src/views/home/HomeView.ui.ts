@@ -1,4 +1,5 @@
 
+import Select from "../../components/select/Select.js";
 import { Config } from "../../config/Config.js";
 import { getMaterialIcon } from "../../lib/gtd/material/materialicons.js";
 import { UIComponent, setEvents } from "../../lib/gtd/web/uicomponent.js";
@@ -8,20 +9,148 @@ import HomeCore from "./HomeView.core.js";
 export default class HomeView extends ViewUI {
 
     private static ID = "home";
+    private static readonly MAX_SALARY = 9999999999999999999999;
+    
+    private result : UIComponent; 
+
 
     public constructor(){
         super({
             type: "view",
             id: HomeView.ID,
-            classes: ["box-column","box-center"],
+            classes: ["box-row","box-x-start","box-y-center"],
         });
     }
 
+    /**
+     * Show the view
+     * @param params The parameters of the view 
+     * @param container The container of the view
+     */
     public async show(params : string[], container : UIComponent): Promise<void> {
 
-        const region = params[0] || "paisVasco";
-        const year = params[1] || new Date().getFullYear() + "";
+        HomeCore.region = params[0] || "paisVasco";
+        HomeCore.year = params[1] || new Date().getFullYear() + "";
 
+        const calcView = new UIComponent({
+            type: "div",
+            classes: ["box-column","box-center"],
+            styles: {
+                height: "100%",
+                width: "80%",
+                padding: "1rem",
+            }
+        });
+
+        const calcMenu = new UIComponent({
+            type: "div",
+            id: "calc-menu",
+            classes: ["box-column","box-x-start","box-x-center"],
+        });
+
+        await this.showMenu(calcMenu);
+        await this.showCalcView(calcView);
+
+        calcMenu.appendTo(this);
+        calcView.appendTo(this);
+        this.appendTo(container);
+    }
+
+    /**
+     * Show region and year selection menu
+     * @param parent The parent component
+     */
+    async showMenu(parent : UIComponent) : Promise<void> {
+        const menu = new UIComponent({
+            type: "div",
+            id: "menu",
+            classes: ["box-column"],
+        });
+
+        const regionTitle = new UIComponent({
+            type: "h3",
+            text: "Regiones: ",
+            classes: ["options-title"],
+        });
+
+        regionTitle.appendTo(menu);
+
+        for (const region in HomeCore.AVAILABLE_REGIONS) {
+            const regionName = HomeCore.AVAILABLE_REGIONS[region];
+            
+            const selected = region == HomeCore.region
+            const regionButtonClasses = ["box-row","box-center","menu-option","region-option"];
+
+            if(selected){
+                regionButtonClasses.push("selected");
+            }
+
+            const regionButton = new UIComponent({
+                type: "button",
+                text: regionName,
+                classes: regionButtonClasses,
+                events: {
+                    click: () => {
+                        HomeCore.region = region;
+                        const options = menu.element.querySelectorAll(".menu-option.region-option");
+
+                        options.forEach(option => {
+                            option.classList.remove("selected");
+                        });
+
+                        regionButton.element.classList.add("selected");
+
+                        this.loadIRPFModel(HomeCore.region, HomeCore.year);
+                        this.showCalcResults((document.getElementById("salary") as HTMLInputElement).valueAsNumber);
+                        
+                    }
+                }              
+            });
+
+            regionButton.appendTo(menu);
+        }
+
+        const yearsTitle = new UIComponent({
+            type: "h3",
+            text: "Años: ",
+            classes: ["options-title"],
+        });
+
+        yearsTitle.appendTo(menu);
+
+        HomeCore.AVAILABLE_YEARS.forEach(year => {
+       
+            const selected = year == HomeCore.year
+            const yearButton = new UIComponent({
+                type: "button",
+                text: year,
+                classes: !selected ? ["box-row","box-center","menu-option","year-option"] : ["box-row","box-center","menu-option","year-option","selected"],
+                events: {
+                    click: () => {
+                        HomeCore.year = year;
+                        const options = menu.element.querySelectorAll(".menu-option.year-option");
+
+                        options.forEach(option => {
+                            option.classList.remove("selected");
+                        });
+
+                        yearButton.element.classList.add("selected");
+
+                        this.loadIRPFModel(HomeCore.region, HomeCore.year);
+                        this.showCalcResults((document.getElementById("salary") as HTMLInputElement).valueAsNumber);
+                    }
+                }
+            });
+
+            yearButton.appendTo(menu);
+        });
+
+        menu.appendTo(parent);
+    }
+
+
+    async showCalcView(parent : UIComponent) :  Promise<void> {
+       
         const mainFrame = new UIComponent({
             type: "div",
             id: "main-frame",
@@ -42,13 +171,7 @@ export default class HomeView extends ViewUI {
             },
         });
 
-        const calculateButton = new UIComponent({
-            type: "button",
-            text: "Calcular",
-            id: "calculate",
-        });
-
-        const result = new UIComponent({
+        this.result = new UIComponent({
             type: "div",
             id: "result",
         });
@@ -77,10 +200,28 @@ export default class HomeView extends ViewUI {
             }
         })
 
+        setEvents(salaryInput.element, {
+            input: () => {
+                this.showCalcResults(+salaryInput.getValue());
+            }
+        });
 
-        if(!await HomeCore.loadIRPFModel(region, year)){
-            console.warn("No se ha podido cargar el modelo de IRPF");
-            result.clean();
+        await this.loadIRPFModel(HomeCore.region, HomeCore.year);
+
+        
+        title.appendTo(mainFrame);
+        salaryInput.appendTo(mainFrame);
+        this.result.appendTo(mainFrame);
+        themeToggle.appendTo(mainFrame);
+
+        mainFrame.appendTo(parent);
+        footer.appendTo(parent);
+    }
+
+
+    async loadIRPFModel(region : string, year : string) {
+        if(!await HomeCore.loadIRPFModel(HomeCore.region, HomeCore.year)){
+            this.result.clean();
 
             const warning = new UIComponent({
                 type: "b",
@@ -88,20 +229,65 @@ export default class HomeView extends ViewUI {
                 text: "No se ha podido cargar el modelo de IRPF",
             });
 
-            warning.appendTo(result);
+            warning.appendTo(this.result);
+            alert({icon:"block",message: "No se pudo cargar el modelo de IRPF"})
+            return;
+        
         }
 
-        
-        title.appendTo(mainFrame);
-        salaryInput.appendTo(mainFrame);
-        calculateButton.appendTo(mainFrame);
-        result.appendTo(mainFrame);
-        themeToggle.appendTo(mainFrame);
+        alert({icon:"sync",message: "Modelo de IRPF cargado correctamente"})
+    }
 
-        mainFrame.appendTo(this);
-        footer.appendTo(this);
-        
-        this.appendTo(container);
+    /**
+     * Show calculation results
+     * @param parent  Parent element
+     * @param grossSalary Gross salary
+     */
+    showCalcResults(grossSalary) {
+
+        if(isNaN(grossSalary)){
+            return;
+        }
+
+        this.result.clean();
+
+        if(grossSalary > HomeView.MAX_SALARY){
+
+            const warning = new UIComponent({
+                type: "b",
+                classes: ["text-error"],
+                text: `too rich buddy!`,
+            });
+            warning.appendTo(this.result);
+            return;
+        }
+
+
+        const salary = HomeCore.getSalary(grossSalary);
+        const extraPayment = HomeCore.getExtraPayment(grossSalary);
+        const irpfPercentage = HomeCore.getIRPFPercentage(grossSalary);
+
+        const salaryResult = new UIComponent({
+            type: "b",
+            classes: ["box-row", "box-center"],
+            text: `Salario: ${salary}€`,
+        });
+
+        const extraPaymentResult = new UIComponent({
+            type: "b",
+            classes: ["box-row", "box-center"],
+            text: `Plus: ${extraPayment}€`,
+        });
+
+        const irpfPercentageResult = new UIComponent({
+            type: "b",
+            classes: ["box-row", "box-center"],
+            text: `IRPF: ${irpfPercentage}%`,
+        });
+
+        salaryResult.appendTo(this.result);
+        extraPaymentResult.appendTo(this.result);
+        irpfPercentageResult.appendTo(this.result);
     }
 
 

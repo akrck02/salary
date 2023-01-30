@@ -1,7 +1,7 @@
 view#home {
     width: 100%;
     height: 100vh;
-    padding: 1rem 2rem;
+    padding: 1rem;
     font-size: 1.6rem;
     background: var(--background);
 }
@@ -32,7 +32,6 @@ view#home #main-frame {
     height: 500px;
 }
 view#home #result {
-    width: calc(100% - 40px);
     text-align: center;
     border-radius: 1rem;
     margin-top: 20px;
@@ -77,4 +76,57 @@ view#home footer {
     position: absolute;
     bottom: 20px;
     font-size: 1rem;
+}
+
+view#home #calc-menu {
+    border-radius: .5rem;
+    height: 100%;
+    width: 20rem;
+    padding: 1rem;
+    background-color:rgba(0,0,0,.05);
+}
+
+:root[data-theme=dark] view#home #calc-menu {
+  background-color: rgba(255,255,255,.05);
+  color: var(--text);
+}
+
+
+view#home #calc-menu .options-title:first-child {
+    margin-top: 0;
+}
+view#home #calc-menu .options-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 1rem 0;
+}
+
+
+view#home .menu-option {
+    padding: .75rem 1rem;
+    border-radius: .5rem;
+    margin: 0;
+    font-size: 1rem;
+    background-color: rgba(0,0,0,.05);
+    margin-bottom: .5rem;
+    cursor: pointer;
+    width: 80%;
+    margin-left: .15%;
+    box-shadow: none;
+}
+
+view#home .menu-option.selected {   
+    width: 97%;
+}
+
+view#home .menu-option:not(.selected):hover {
+    background-color: rgba(0,0,0,.1);
+}
+
+:root[data-theme=dark] view#home .menu-option:hover {
+    background-color: rgba(255,255,255,.1);
+}
+
+:root[data-theme=dark] view#home .menu-option {
+    background-color: rgba(255,255,255,.05);
 }

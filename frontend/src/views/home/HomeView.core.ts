@@ -6,6 +6,46 @@ import IrpfService from "../../services/IrpfService.js";
 import LanguageService from "../../services/LanguageService.js";
 
 export default class HomeCore extends ViewCore {
+    
+    static readonly AVAILABLE_REGIONS ={
+        "paisvasco": "País Vasco",
+        "catalunya": "Catalunya",
+    }
+
+    static readonly AVAILABLE_YEARS = [
+        "2023",
+        "2022",
+    ]
+
+    public static region : string;
+    public static year : string;
+
+    /**
+     * Get the irpf percentage
+     * @param grossSalary The gross salary
+     * @returns The irpf percentage
+     */    
+    static getIRPFPercentage(grossSalary : number) {
+        return IrpfService.getIrpf(grossSalary);
+    }
+
+    /**
+     * Get the extra payment
+     * @param grossSalary The gross salary
+     * @returns The extra payment
+     */
+    static getExtraPayment(grossSalary : number) {
+        return IrpfService.extraPayment(grossSalary);
+    }
+
+    /**
+     * Get the salary with taxes
+     * @param grossSalary The gross salary
+     * @returns The salary with taxes
+     */
+    static getSalary(grossSalary : number) {
+        return IrpfService.calcWithTaxes(grossSalary);
+    }
 
     /**
      * Get available languages to add to the select

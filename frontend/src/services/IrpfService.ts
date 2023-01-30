@@ -66,7 +66,6 @@ export default class IrpfService {
         }
 
         let irpf = undefined;
-		console.log(IrpfService.IRPF_RANGES);
 	   
         // Get irpf on ranges
         for (const minimum in IrpfService.IRPF_RANGES) {

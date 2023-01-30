@@ -42,6 +42,7 @@ export default class Router {
                 case undefined:
                 case "":
                 case "home":
+                case "calc":
                     new HomeView().show(params.splice(1), this.container);    
                     break;
                 case "lang":

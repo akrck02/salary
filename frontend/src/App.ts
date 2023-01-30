@@ -32,6 +32,11 @@ export default class App {
         document.body.appendChild(this.notification.element);
         this.setNoficationSystem();
         console.log("App loaded!");
+
+        // Load the app theme
+        if(Config.isDarkTheme()){
+           Config.setDarkMode();
+        }
     }
 
     /**
