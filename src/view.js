@@ -45,8 +45,7 @@ async function load() {
         document.documentElement.dataset.theme = localStorage.getItem('irpf-theme');
     } 
 
-
-    await SalaryCalculator.load();
+    await SalaryCalculator.load("pv",new Date().getFullYear());
 
     const footer = document.querySelector('footer');
     footer.innerHTML = footer.innerHTML.replace('$year', new Date().getFullYear());

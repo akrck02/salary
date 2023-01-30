@@ -6,9 +6,9 @@ const PAYMENT_NUMBER_TAXES = 12;
 
 export class SalaryCalculator {
 
-    static async load() {
-        IRPF_RANGES = await fetch("./irpfRanges.json").then(response => response.json());
-        TAXES = await fetch("./taxes.json").then(response => response.json());
+    static async load(province, year) {
+        IRPF_RANGES = await fetch(`../resources/${year}/irpfRanges-${province}.json`).then(response => response.json());
+        TAXES = await fetch("../resources/taxes.json").then(response => response.json());
     }
 
     static calcWithTaxes(salary) {
@@ -45,7 +45,7 @@ export class SalaryCalculator {
     }
 
     /**
-     * Get the current year irpf on the salary
+     * Get the irpf on the salary
      * @param {number} salary The salary itself
      * @returns {number} The irpf value
      */
@@ -56,18 +56,17 @@ export class SalaryCalculator {
         }
 
         let irpf = undefined;
-		let currentYear = new Date().getFullYear();
-		console.log(IRPF_RANGES[currentYear]);
+		console.log(IRPF_RANGES);
 	   
         // Get irpf on ranges
-        for (const minimum in IRPF_RANGES[currentYear]) {
+        for (const minimum in IRPF_RANGES) {
 
             const range = parseInt(minimum);
             if (salary <= range) {
                 return irpf;
             }
 
-            irpf = IRPF_RANGES[currentYear][minimum]; 
+            irpf = IRPF_RANGES[minimum]; 
         }
 
         return irpf;
