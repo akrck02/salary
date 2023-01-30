@@ -45,7 +45,7 @@ export class SalaryCalculator {
     }
 
     /**
-     * Get the irpf on the salary
+     * Get the current year irpf on the salary
      * @param {number} salary The salary itself
      * @returns {number} The irpf value
      */
@@ -56,16 +56,18 @@ export class SalaryCalculator {
         }
 
         let irpf = undefined;
-        
+		let currentYear = new Date().getFullYear();
+		console.log(IRPF_RANGES[currentYear]);
+	   
         // Get irpf on ranges
-        for (const minimum in IRPF_RANGES) {
+        for (const minimum in IRPF_RANGES[currentYear]) {
 
             const range = parseInt(minimum);
             if (salary <= range) {
                 return irpf;
             }
 
-            irpf = IRPF_RANGES[minimum]; 
+            irpf = IRPF_RANGES[currentYear][minimum]; 
         }
 
         return irpf;
