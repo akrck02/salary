@@ -114,7 +114,7 @@ view#home #calc-menu .options-title {
 view#home:not(.mobile) #calc-menu .button-container {
     justify-content: left;
     flex-wrap: wrap;
-
+}
 
 view#home .menu-option {
     padding: .75rem 1rem;
