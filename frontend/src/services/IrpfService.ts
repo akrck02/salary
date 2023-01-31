@@ -138,5 +138,10 @@ export default class IrpfService {
     }
 
 
+    static clean() {
+        IrpfService.IRPF_RANGES = undefined;
+        IrpfService.TAXES = undefined;
+    }
+
 
 }
