@@ -47,6 +47,10 @@ export default class HomeCore extends ViewCore {
         return IrpfService.calcWithTaxes(grossSalary);
     }
 
+    static cleanIrpfModel() {
+        IrpfService.clean();
+    }
+
     /**
      * Get available languages to add to the select
      * @returns The available languages

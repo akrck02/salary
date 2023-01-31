@@ -1,10 +1,10 @@
-
-import Select from "../../components/select/Select.js";
 import { Config } from "../../config/Config.js";
 import { getMaterialIcon } from "../../lib/gtd/material/materialicons.js";
+import { isSmallDevice } from "../../lib/gtd/web/responsivetools.js";
 import { UIComponent, setEvents } from "../../lib/gtd/web/uicomponent.js";
 import { ViewUI } from "../../lib/gtdf/views/ViewUI.js";
 import HomeCore from "./HomeView.core.js";
+
 
 export default class HomeView extends ViewUI {
 
@@ -29,17 +29,17 @@ export default class HomeView extends ViewUI {
      */
     public async show(params : string[], container : UIComponent): Promise<void> {
 
-        HomeCore.region = params[0] || "paisVasco";
+        if(isSmallDevice()){
+            this.element.classList.add("mobile");
+        }
+
+        HomeCore.region = params[0] || "paisvasco";
         HomeCore.year = params[1] || new Date().getFullYear() + "";
 
         const calcView = new UIComponent({
             type: "div",
             classes: ["box-column","box-center"],
-            styles: {
-                height: "100%",
-                width: "80%",
-                padding: "1rem",
-            }
+            id: "calc-frame",
         });
 
         const calcMenu = new UIComponent({
@@ -75,6 +75,11 @@ export default class HomeView extends ViewUI {
 
         regionTitle.appendTo(menu);
 
+        const regionsButtonContainer = new UIComponent({
+            type: "div",
+            classes: ["button-container","box-row","box-center"],
+        });
+
         for (const region in HomeCore.AVAILABLE_REGIONS) {
             const regionName = HomeCore.AVAILABLE_REGIONS[region];
             
@@ -90,7 +95,7 @@ export default class HomeView extends ViewUI {
                 text: regionName,
                 classes: regionButtonClasses,
                 events: {
-                    click: () => {
+                    click: async () => {
                         HomeCore.region = region;
                         const options = menu.element.querySelectorAll(".menu-option.region-option");
 
@@ -100,15 +105,18 @@ export default class HomeView extends ViewUI {
 
                         regionButton.element.classList.add("selected");
 
-                        this.loadIRPFModel(HomeCore.region, HomeCore.year);
+                        await this.loadIRPFModel(HomeCore.region, HomeCore.year);
                         this.showCalcResults((document.getElementById("salary") as HTMLInputElement).valueAsNumber);
+                        this.toggleMobileMenu();
                         
                     }
                 }              
             });
 
-            regionButton.appendTo(menu);
+            regionButton.appendTo(regionsButtonContainer);
         }
+
+        regionsButtonContainer.appendTo(menu);
 
         const yearsTitle = new UIComponent({
             type: "h3",
@@ -118,6 +126,11 @@ export default class HomeView extends ViewUI {
 
         yearsTitle.appendTo(menu);
 
+        const yearsButtonContainer = new UIComponent({
+            type: "div",
+            classes: ["button-container","box-row","box-center"],
+        });
+
         HomeCore.AVAILABLE_YEARS.forEach(year => {
        
             const selected = year == HomeCore.year
@@ -126,7 +139,7 @@ export default class HomeView extends ViewUI {
                 text: year,
                 classes: !selected ? ["box-row","box-center","menu-option","year-option"] : ["box-row","box-center","menu-option","year-option","selected"],
                 events: {
-                    click: () => {
+                    click: async () => {
                         HomeCore.year = year;
                         const options = menu.element.querySelectorAll(".menu-option.year-option");
 
@@ -136,14 +149,16 @@ export default class HomeView extends ViewUI {
 
                         yearButton.element.classList.add("selected");
 
-                        this.loadIRPFModel(HomeCore.region, HomeCore.year);
+                        await this.loadIRPFModel(HomeCore.region, HomeCore.year);
                         this.showCalcResults((document.getElementById("salary") as HTMLInputElement).valueAsNumber);
+                        this.toggleMobileMenu();
                     }
                 }
             });
 
-            yearButton.appendTo(menu);
+            yearButton.appendTo(yearsButtonContainer);
         });
+        yearsButtonContainer.appendTo(menu);
 
         menu.appendTo(parent);
     }
@@ -200,6 +215,25 @@ export default class HomeView extends ViewUI {
             }
         })
 
+        const settingsButton = new UIComponent({
+            type: "div",
+            text: getMaterialIcon("tune",
+            {
+                size: "24",
+                fill: darkTheme ? "#ccc" : "#222",
+            }).toHTML(),
+            classes: ["settings","box-row","settings", "box-center"],
+        });
+
+        settingsButton.appendTo(mainFrame);
+      
+        const view = this;
+        setEvents(settingsButton.element, {
+            click: () => {
+                view.toggleMobileMenu();
+            }
+        });
+
         setEvents(salaryInput.element, {
             input: () => {
                 this.showCalcResults(+salaryInput.getValue());
@@ -221,6 +255,8 @@ export default class HomeView extends ViewUI {
 
     async loadIRPFModel(region : string, year : string) {
         if(!await HomeCore.loadIRPFModel(HomeCore.region, HomeCore.year)){
+
+            HomeCore.cleanIrpfModel();
             this.result.clean();
 
             const warning = new UIComponent({
@@ -230,12 +266,19 @@ export default class HomeView extends ViewUI {
             });
 
             warning.appendTo(this.result);
-            alert({icon:"block",message: "No se pudo cargar el modelo de IRPF"})
+
+            if(!isSmallDevice()){
+                alert({icon:"block",message: "No se pudo cargar el modelo de IRPF"})
+            }
+            
             return;
         
         }
-
-        alert({icon:"sync",message: "Modelo de IRPF cargado correctamente"})
+        this.result.clean();
+        
+        if (!isSmallDevice()) {
+            alert({icon:"sync",message: "Modelo de IRPF cargado correctamente"})
+        }
     }
 
     /**
@@ -290,6 +333,9 @@ export default class HomeView extends ViewUI {
         irpfPercentageResult.appendTo(this.result);
     }
 
-
+    toggleMobileMenu() {
+        const menu = document.getElementById("calc-menu");
+        menu.classList.toggle("show");
+    }
 
 }
