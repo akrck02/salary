@@ -1,7 +1,7 @@
 {
-  "name": "gtd-framework",
+  "name": "irpf-calculator",
   "version": "1.0.0",
-  "description": "Typescript framework to rule them all",
+  "description": "Typescript IRPF calculator for spain",
   "main": "index.js",
   "directories": {
     "doc": "docs"
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/akrck02/GTD_Framework.git"
+    "url": "git+https://github.com/akrck02/IRPFCalculator.git"
   },
   "keywords": [
     "Typescript",
@@ -25,9 +25,9 @@
   "author": "akrck02",
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/akrck02/GTD_Framework/issues"
+    "url": "https://github.com/akrck02/IRPFCalculator/issues"
   },
-  "homepage": "https://github.com/akrck02/GTD_Framework#readme",
+  "homepage": "https://github.com/akrck02/IRPFCalculator#readme",
   "devDependencies": {
     "rollup": "^2.70.1",
     "typescript": "^4.5.2"
