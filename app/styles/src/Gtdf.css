@@ -1,0 +1,37 @@
+@import url("./BubbleUI-v2.0.1.css");
+@import url("./components/_import.css");
+@import url("./views/_import.css");
+
+:root {
+    --accent-color : #007ACC;
+    --background: #fff;
+    --input-bg: #f1f1f1;
+    --input-bg-hover: #e1e1e1;
+    --text: #222;
+}
+
+:root[data-theme="dark"] {
+    --background: #151515;
+    --input-bg: #202020;
+    --input-bg-hover: #303030;
+    --text: #eee;
+}
+
+body, view {
+    transition: .35s;
+}
+
+.accent-hover:hover{
+    color: var(--accent-color);
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}

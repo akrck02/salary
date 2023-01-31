@@ -1,0 +1,39 @@
+{
+  "name": "irpf-calculator",
+  "version": "1.0.0",
+  "description": "Typescript IRPF calculator for spain",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "compile": "npm run compile-server & npm run compile-client",
+    "compile-server": "tsc --project ./backend/",
+    "compile-server-watch": "tsc --project ./backend/ -w",
+    "compile-client": "tsc --project ./frontend/",
+    "compile-client-watch": "tsc --project ./frontend/ -w",
+    "serve" : "node ./serve.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akrck02/IRPFCalculator.git"
+  },
+  "keywords": [
+    "Typescript",
+    "single-page-app"
+  ],
+  "author": "akrck02",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/akrck02/IRPFCalculator/issues"
+  },
+  "homepage": "https://github.com/akrck02/IRPFCalculator#readme",
+  "devDependencies": {
+    "rollup": "^2.70.1",
+    "typescript": "^4.5.2"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "live-server": "^1.1.0"
+  }
+}

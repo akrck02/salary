@@ -1,3 +1,2 @@
 # IRPFCalculator
-
-A Simple IRPF Calculator for Spain made in Javascript.
+A simple IRPF calculator for Spain made in Typescript using GTD-Framework

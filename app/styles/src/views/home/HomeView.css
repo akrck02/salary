@@ -1,0 +1,215 @@
+view#home {
+    width: 100%;
+    height: 100vh;
+    padding: 1rem;
+    font-size: 1.6rem;
+    background: var(--background);
+}
+
+view#home h1, p, b , footer{
+    text-align: center;
+    color: var(--text);
+    font-family: Roboto, Helvetica, sans-serif;
+}
+
+view#home h1 {
+    font-weight: bold;
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+}
+
+view#home * {
+    transition: .35s;
+}
+
+view#home #main-frame {
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 500px;
+}
+view#home #result {
+    text-align: center;
+    border-radius: 1rem;
+    margin-top: 20px;
+    padding: 20px;
+    font-size: 1.2rem;
+}
+
+view#home input {
+    border-radius: 1rem;
+    border: none;
+    width: 100%;
+    max-width: 15rem;
+    padding: .25rem .75rem;
+    background: var(--input-bg);
+    margin-bottom: 1rem;
+    height: 2rem;
+    color: var(--text);
+}
+
+view#home button {
+    border-radius: .35rem;
+    border: none;
+    padding: .5rem .75rem;
+    background: var(--input-bg);
+    margin-bottom: 1rem;
+    cursor: pointer;
+    color: var(--text);
+}
+
+view#home button:hover {
+    background: var(--input-bg-hover);
+}
+
+view#home .theme {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+}
+
+view#home footer {
+    position: absolute;
+    bottom: 20px;
+    font-size: 1rem;
+}
+
+view#home #calc-menu {
+    border-radius: .5rem;
+    height: 100%;
+    width: 20rem;
+    min-width: 13rem;
+
+    overflow-y: auto;
+    padding: 1rem;
+    background-color:rgba(0,0,0,.05);
+}
+
+:root[data-theme=dark] view#home #calc-menu {
+  background-color: rgba(255,255,255,.05);
+  color: var(--text);
+}
+
+view#home #calc-frame {
+    width: 80%;
+    padding: 1rem;
+    height: 100%;
+}
+
+
+view#home #calc-menu .options-title:first-child {
+    margin-top: 0;
+}
+view#home #calc-menu .options-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 1rem 0;
+}
+
+
+view#home:not(.mobile) #calc-menu .button-container {
+    justify-content: left;
+    flex-wrap: wrap;
+}
+
+view#home .menu-option {
+    padding: .75rem 1rem;
+    border-radius: .5rem;
+    margin: 0;
+    font-size: 1rem;
+    background-color: rgba(0,0,0,.05);
+    margin-bottom: .5rem;
+    cursor: pointer;
+    width: 80%;
+    margin-left: .15%;
+    box-shadow: none;
+}
+
+view#home .menu-option.selected {   
+    width: 97%;
+}
+
+view#home .menu-option:not(.selected):hover {
+    background-color: rgba(0,0,0,.1);
+}
+
+:root[data-theme=dark] view#home .menu-option:hover {
+    background-color: rgba(255,255,255,.1);
+}
+
+:root[data-theme=dark] view#home .menu-option {
+    background-color: rgba(255,255,255,.05);
+}
+
+/**
+    MOBILE STYLES 
+**/
+view#home.mobile {
+    padding: 0;
+}
+
+view#home:not(.mobile) .settings {
+    display: none;
+}
+
+view#home .settings {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    cursor: pointer;
+}
+
+
+view#home.mobile #calc-menu{ 
+    position: fixed;
+    background: #fff;
+    border-radius: 2rem 2rem 0 0;
+    padding: 1.5rem 1.5rem 0 1.5rem ;
+    z-index: 999;
+    height: 50%;
+    width: 100%;
+    top: 100%;
+    box-shadow: 0rem 0rem 1rem rgba(0,0,0,.1);
+    transition: top .5s ease-out;
+}
+
+view#home.mobile #calc-menu.show{
+    top: 50%;
+}
+
+view#home.mobile #calc-menu .button-container {
+    flex-wrap: wrap;
+}
+
+view#home.mobile #calc-menu .button-container .menu-option{
+    font-size: 1rem;
+    margin: .25rem;
+}
+
+
+view#home.mobile #calc-menu .button-container .region-option {
+    min-width: 5rem;
+    max-width: 20rem;
+    width: auto;
+}
+
+view#home.mobile #calc-menu .button-container .year-option {
+    min-width: 5rem;
+    max-width: 5rem;
+}
+
+view#home.mobile .menu-option.selected {   
+    background: rgba(0,0,0,.1);
+}
+
+:root[data-theme=dark] view#home.mobile #calc-menu {
+    background: #222;
+}
+
+view#home.mobile #calc-frame {
+    width: 100%;
+}
