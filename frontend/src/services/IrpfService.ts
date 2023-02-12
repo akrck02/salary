@@ -12,7 +12,7 @@ export default class IrpfService {
 
         try {
             IrpfService.IRPF_RANGES = await fetch(`${Config.PATHS.IRPF_INFO}${year}/irpfRanges-${province}.json`).then(response => response.json());
-            IrpfService.TAXES = await fetch(`${Config.PATHS.IRPF_INFO}taxes.json`).then(response => response.json());
+            IrpfService.TAXES = await fetch(`${Config.PATHS.IRPF_INFO}${year}/taxes.json`).then(response => response.json());
             return true;
         } catch (error) {
             return false;
