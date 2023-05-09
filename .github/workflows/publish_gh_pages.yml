@@ -17,6 +17,9 @@ jobs:
     - name: compile typescript
       run: npm run compile-client
       
+    - name: Remove gitignore
+      run: rm .gitignore
+      
     - name: Check the output
       run: ls -lha app/styles/ && ls -lha frontend/
 
