@@ -76,11 +76,6 @@ export default class IrpfService {
     }
 
 
-    /**
-     * Calculate the extra payment with multiple salaries
-     * @param salaries The salaries itself
-     * @returns {number} The extra payment
-     */
     static extraPaymentWithMultipleSalaries(salaries : SalaryTime[]) {
 
         if(salaries === undefined || salaries.length === 0) {
@@ -91,7 +86,7 @@ export default class IrpfService {
             throw new Error("IRPF_RANGES or TAXES are undefined, please load the data first");
         }
         
-        // salary * days / 180
+        // salario * dias / 180
         let totalSalary = 0;
         for (const salary of salaries) {
 
@@ -106,7 +101,7 @@ export default class IrpfService {
             let extraPayment = IrpfService.extraPayment(salary.salary);
 
             // every month has 30 days
-            let totalDays = (salary.endDate.getFullYear() - salary.startDate.getFullYear()) * 12 * 30;                      
+            let totalDays = (salary.endDate.getMonth() - salary.startDate.getMonth()) * 30;                      
             totalDays -= salary.startDate.getDate();
             totalDays += Math.min(salary.endDate.getDate(), 30);
             totalDays = Math.max(totalDays, 0);
