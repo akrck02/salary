@@ -21,6 +21,14 @@ export default class HomeCore extends ViewCore {
         return IrpfService.extraPayment(grossSalary);
     }
     /**
+     *
+     * @param salaries
+     * @returns
+     */
+    static getExtraPaymentWithMultipleSalaries(salaries) {
+        return IrpfService.extraPaymentWithMultipleSalaries(salaries);
+    }
+    /**
      * Get the salary with taxes
      * @param grossSalary The gross salary
      * @returns The salary with taxes
@@ -28,6 +36,9 @@ export default class HomeCore extends ViewCore {
     static getSalary(grossSalary) {
         return IrpfService.calcWithTaxes(grossSalary);
     }
+    /**
+     * Get the irpf value
+     */
     static cleanIrpfModel() {
         IrpfService.clean();
     }
@@ -52,13 +63,19 @@ export default class HomeCore extends ViewCore {
         Config.setLanguage(selected);
         Utils.redirect(Config.VIEWS.HOME, [], true);
     }
+    /**
+     * Load the irpf model
+     * @param region The region to load
+     * @param year The year to load
+     * @returns True if the data is loaded, false otherwise
+     */
     static async loadIRPFModel(region, year) {
         return await IrpfService.load(region, year);
     }
 }
 HomeCore.AVAILABLE_REGIONS = {
     "paisvasco": "País Vasco",
-    "catalunya": "Catalunya",
+    //"catalunya": "Catalunya",
 };
 HomeCore.AVAILABLE_YEARS = [
     "2023",
