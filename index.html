@@ -12,11 +12,12 @@
         // if location has / 
         if (location.href[location.href.length - 1] == "/") {
             location.href += "app/"; // redirect to app folder
-            return;
+        } else {
+            location.href += "/app/"; // redirect to app folder
         }
 
-        location.href += "/app/"; // redirect to app folder
-        
+       
+
     </script>
 </body>
 </html>
