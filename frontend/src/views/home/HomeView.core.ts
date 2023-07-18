@@ -9,7 +9,7 @@ export default class HomeCore extends ViewCore {
     
     static readonly AVAILABLE_REGIONS ={
         "paisvasco": "País Vasco",
-        "catalunya": "Catalunya",
+        //"catalunya": "Catalunya",
     }
 
     static readonly AVAILABLE_YEARS = [
