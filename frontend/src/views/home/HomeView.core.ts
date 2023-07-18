@@ -2,7 +2,7 @@ import { StringMap } from "../../components/select/Select.js";
 import { Config } from "../../config/Config.js";
 import Utils from "../../core/Utils.js";
 import { ViewCore } from "../../lib/gtdf/views/ViewCore.js";
-import IrpfService from "../../services/IrpfService.js";
+import IrpfService, { SalaryTime } from "../../services/IrpfService.js";
 import LanguageService from "../../services/LanguageService.js";
 
 export default class HomeCore extends ViewCore {
@@ -39,6 +39,16 @@ export default class HomeCore extends ViewCore {
     }
 
     /**
+     * 
+     * @param salaries 
+     * @returns 
+     */
+    static getExtraPaymentWithMultipleSalaries(salaries : SalaryTime[]) {
+        return IrpfService.extraPaymentWithMultipleSalaries(salaries);
+    }
+
+
+    /**
      * Get the salary with taxes
      * @param grossSalary The gross salary
      * @returns The salary with taxes
@@ -47,6 +57,9 @@ export default class HomeCore extends ViewCore {
         return IrpfService.calcWithTaxes(grossSalary);
     }
     
+    /**
+     * Get the irpf value
+     */
     static cleanIrpfModel() {
         IrpfService.clean();
     }
@@ -78,6 +91,12 @@ export default class HomeCore extends ViewCore {
         Utils.redirect(Config.VIEWS.HOME,[],true);
     } 
 
+    /**
+     * Load the irpf model
+     * @param region The region to load 
+     * @param year The year to load
+     * @returns True if the data is loaded, false otherwise
+     */
     public static async loadIRPFModel(region : string, year : string) {
         return await IrpfService.load(region, year);
     }

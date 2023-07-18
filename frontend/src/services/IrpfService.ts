@@ -1,14 +1,26 @@
 import { Config } from "../config/Config.js";
 
+export interface SalaryTime {
+    salary : number;
+    startDate : Date;
+    endDate : Date;
+}
+
 export default class IrpfService {
+
     static IRPF_RANGES;
     static TAXES;
 
     static readonly PAYMENT_NUMBER = 14;
     static readonly PAYMENT_NUMBER_TAXES = 12;
 
-
-    static async load(province, year) {
+    /**
+     * Load the irpf data 
+     * @param province The province to load the data
+     * @param year The year to load the data
+     * @returns {boolean} True if the data is loaded, false otherwise
+     */
+    static async load(province : string, year : string) : Promise<boolean> {
 
         try {
             IrpfService.IRPF_RANGES = await fetch(`${Config.PATHS.IRPF_INFO}${year}/irpfRanges-${province}.json`).then(response => response.json());
@@ -20,8 +32,12 @@ export default class IrpfService {
      
     }
 
-
-    static calcWithTaxes(salary) {
+    /**
+     * Calculate the salary without taxes
+     * @param salary The salary itself
+     * @returns {number} The salary without taxes
+     */
+    static calcWithTaxes(salary : number) : number {
 
         if(salary <= 0){
             return 0;
@@ -40,7 +56,12 @@ export default class IrpfService {
         return Math.ceil(((salary / IrpfService.PAYMENT_NUMBER) - total_deductions) * 100) / 100;
     }
 
-    static extraPayment(salary) {
+    /**
+     * Calculate the extra payment
+     * @param salary The salary itself
+     * @returns {number} The extra payment
+     */
+    static extraPayment(salary : number) : number {
 
         if(salary <= 0){
             return 0;
@@ -54,12 +75,55 @@ export default class IrpfService {
 
     }
 
+
+    /**
+     * Calculate the extra payment with multiple salaries
+     * @param salaries The salaries itself
+     * @returns {number} The extra payment
+     */
+    static extraPaymentWithMultipleSalaries(salaries : SalaryTime[]) {
+
+        if(salaries === undefined || salaries.length === 0) {
+            return 0;
+        }
+
+        if(IrpfService.IRPF_RANGES === undefined || IrpfService.TAXES === undefined) {
+            throw new Error("IRPF_RANGES or TAXES are undefined, please load the data first");
+        }
+        
+        // salary * days / 180
+        let totalSalary = 0;
+        for (const salary of salaries) {
+
+            if(salary.startDate.getFullYear() !== salary.endDate.getFullYear()) {
+                throw new Error("Start date and end date must be in the same year");
+            }
+
+            if(salary.startDate > salary.endDate) {
+                throw new Error("Start date is greater than end date");
+            }
+            
+            let extraPayment = IrpfService.extraPayment(salary.salary);
+
+            // every month has 30 days
+            let totalDays = (salary.endDate.getFullYear() - salary.startDate.getFullYear()) * 12 * 30;                      
+            totalDays -= salary.startDate.getDate();
+            totalDays += Math.min(salary.endDate.getDate(), 30);
+            totalDays = Math.max(totalDays, 0);
+
+            totalSalary += extraPayment * totalDays / 180;
+            
+        }
+
+        return totalSalary;
+    }
+
     /**
      * Get the irpf on the salary
      * @param {number} salary The salary itself
      * @returns {number} The irpf value
      */
-    static getIrpf(salary) {
+    static getIrpf(salary : number) : number {
 
         if(salary <= 0){
             return 0;
@@ -86,7 +150,7 @@ export default class IrpfService {
      * @param {number} salary The salary itself
      * @returns {number} The irpf value calculated on the salary and the payment number
      */
-    static getIrpfValue(salary) {
+    static getIrpfValue(salary : number) : number {
 
         if(salary <= 0){
             return 0;
@@ -100,7 +164,7 @@ export default class IrpfService {
      * @param {number} salary The salary itself 
      * @returns {number} The contingencias comunes value calculated on the salary and the payment number
      */
-    static getContingenciasComunesValue(salary) {
+    static getContingenciasComunesValue(salary) : number {
 
         if(salary <= 0){
             return 0;
@@ -114,7 +178,7 @@ export default class IrpfService {
      * @param {number} salary The salary itself
      * @returns {number} The atur value calculated on the salary and the payment number
      */
-    static getAturValue(salary) {
+    static getAturValue(salary : number) : number {
         
         if(salary <= 0){
             return 0;
@@ -128,7 +192,7 @@ export default class IrpfService {
      * @param {*} salary The salary itself
      * @returns {number} The fp value calculated on the salary and the payment number
      */
-    static getFpValue(salary) {
+    static getFpValue(salary) : number {
 
         if(salary <= 0){
             return 0;
@@ -138,6 +202,9 @@ export default class IrpfService {
     }
 
 
+    /**
+     * Clean the service variables
+     */
     static clean() {
         IrpfService.IRPF_RANGES = undefined;
         IrpfService.TAXES = undefined;

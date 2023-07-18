@@ -310,7 +310,7 @@ export default class HomeView extends ViewUI {
         const salary = HomeCore.getSalary(grossSalary);
         const extraPayment = HomeCore.getExtraPayment(grossSalary);
         const irpfPercentage = HomeCore.getIRPFPercentage(grossSalary);
-
+        
         const salaryResult = new UIComponent({
             type: "b",
             classes: ["box-row", "box-center"],
