@@ -890,6 +890,7 @@
             }
             HomeCore.region = params[0] || "paisvasco";
             HomeCore.year = params[1] || new Date().getFullYear() + "";
+            HomeCore.grossSalary = +params[2] || 0;
             const calcView = new UIComponent({
                 type: "div",
                 classes: ["box-column", "box-center"],
@@ -1004,6 +1005,7 @@
                 attributes: {
                     type: "number",
                     name: "salary",
+                    value: HomeCore.grossSalary > 0 ? HomeCore.grossSalary + "" : "",
                     min: "0"
                 },
             });
@@ -1052,6 +1054,9 @@
                 }
             });
             await this.loadIRPFModel(HomeCore.region, HomeCore.year);
+            if (HomeCore.grossSalary > 0) {
+                await this.showCalcResults(HomeCore.grossSalary);
+            }
             title.appendTo(mainFrame);
             salaryInput.appendTo(mainFrame);
             this.result.appendTo(mainFrame);
