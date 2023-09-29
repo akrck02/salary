@@ -19,6 +19,7 @@ export default class HomeCore extends ViewCore {
 
     public static region : string;
     public static year : string;
+    public static grossSalary : number;
 
     /**
      * Get the irpf percentage
