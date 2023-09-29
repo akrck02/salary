@@ -34,6 +34,7 @@ export default class HomeView extends ViewUI {
 
         HomeCore.region = params[0] || "paisvasco";
         HomeCore.year = params[1] || new Date().getFullYear() + "";
+        HomeCore.grossSalary = +params[2] || 0;
 
         const calcView = new UIComponent({
             type: "div",
@@ -182,6 +183,7 @@ export default class HomeView extends ViewUI {
             attributes: {   
                 type: "number",
                 name: "salary",
+                value : HomeCore.grossSalary > 0 ? HomeCore.grossSalary + "" : "",
                 min: "0"
             },
         });
@@ -241,6 +243,10 @@ export default class HomeView extends ViewUI {
         });
 
         await this.loadIRPFModel(HomeCore.region, HomeCore.year);
+
+        if(HomeCore.grossSalary > 0){
+            await this.showCalcResults(HomeCore.grossSalary);
+        }
 
         
         title.appendTo(mainFrame);
