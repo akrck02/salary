@@ -13,6 +13,7 @@ export default class HomeCore extends ViewCore {
     }
 
     static readonly AVAILABLE_YEARS = [
+		"2024",
         "2023",
         "2022",
     ]
