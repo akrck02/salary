@@ -78,6 +78,7 @@ HomeCore.AVAILABLE_REGIONS = {
     //"catalunya": "Catalunya",
 };
 HomeCore.AVAILABLE_YEARS = [
+    "2024",
     "2023",
     "2022",
 ];
