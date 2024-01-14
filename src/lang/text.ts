@@ -8,6 +8,7 @@ export class TextBundle implements IObserver {
         "home",
         "errors",
         "info",
+        "languages"
     ];
     private static _instance : TextBundle;
 
