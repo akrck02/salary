@@ -219,7 +219,7 @@ export default class HomeView extends ViewUI {
 
             const languageButton = new UIComponent({
                 type: HTML.BUTTON,
-                text: lang.toLowerCase(),
+                text: Text.languages[lang.toLocaleLowerCase()],
                 classes: languageButtonClasses,
                 events: {
                 
