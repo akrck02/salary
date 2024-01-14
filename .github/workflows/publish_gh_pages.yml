@@ -14,23 +14,14 @@ jobs:
     - name: instal node dependencies
       run: npm install
      
-    - name: compile typescript
-      run: npm run compile
-      
-    - name: change to production mode
-      run: npm run prod
-
-    - name: minify styles
-      run: npm run pack-styles
-    
-    - name: pack frontend
-      run: npm run pack-client
+    - name: run dist build
+      run: npm run dist
 
     - name: Remove gitignore
       run: rm .gitignore
       
     - name: Check the output
-      run: ls -lha app/styles/ && ls -lha frontend/
+      run: ls -lha app/styles/ && ls -lha temp/
 
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@v4.3.0
