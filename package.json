@@ -10,7 +10,7 @@
     "compile": "tsc --project .",
     "compile-watch": "tsc --project . -w",
     "pack-styles": "java -jar bin/lit-v1.0b2.jar",
-    "pack-client": "rollup temp/src/Start.js --file out/App.js --format iife",
+    "pack-client": "rollup temp/src/start.js --file out/app.js --format iife",
     "dist" : "npm run compile && npm run pack-styles && npm run pack-client && npm run prod",
     "dev" : "node bin/environment.js dev",
     "prod" : "node bin/environment.js prod",
