@@ -1,18 +1,18 @@
-@import url("https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Ubuntu+Mono&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap');
 /*
 General variables of the framework
 */
 :root {
---font: 'Roboto light', sans-serif;
---font-light:   'Roboto thin', sans-serif;
---font-title:   'Roboto', sans-serif;
+--font : 'Open Sans', sans-serif;
+--font-light:   'Open Sans', sans-serif;
+--font-title:   'Open Sans', sans-serif;
 --font-console: 'Ubuntu Mono', monospace;
 --RGB-background:   250, 250, 250;
 --RGB-background-alternative:   247, 247, 247;
 --RGB-menu: 255, 255, 255;
 --RGB-contrast: 241, 241, 241;
---RGB-accent-color: 30, 144, 255;
+--RGB-accent-color: 180, 197, 255;
 --RGB-text-color:   64, 64, 64;
 --RGB-error-color:  235, 87, 87;
 --RGB-success-color:0, 200, 81;
@@ -45,8 +45,13 @@ General variables of the framework
 --super-slow:   1s;
 margin: 0;
 padding:0;
+font-size: 1.1rem;
 overflow-x: hidden;
 -webkit-tap-highlight-color: transparent;
+}
+:root[data-theme="dark"] {
+--RGB-text-color:   255, 255, 255;
+--RGB-accent-color: 180, 197, 255;
 }
 /*
 Accessibility feature for reduced motion
@@ -642,10 +647,6 @@ color: #404040;
 z-index: 1000;
 box-shadow: 0.1em .5rem .1rem rgba(0,0,0,.15);
 }
-:root[data-theme=dark] notification {
-background : rgba(0,0,0,.75);
-color: #f0f0f0;
-}
 notification.show {
 bottom: 1rem;
 opacity: 1;
@@ -659,7 +660,7 @@ notification #nt-bar.hidden{
 display: none;
 }
 notification #nt-bar #nt-title{
-font-size : 1.25rem"
+font-size : 1.25rem;
 }
 notification #nt-content {
 word-break : break-word;
@@ -715,6 +716,59 @@ cursor : pointer;
 gtdf-select #selector .option:hover {
 background: #f5f5f5;
 }
+#bottombar{
+position:fixed;
+width:100%;
+bottom:0;
+left:0;
+min-height:5rem;
+height: 5rem;
+background-color:var(--background);
+color:var(--color-text);
+box-shadow:0 -.4rem .5rem rgba(0,0,0,0.1);
+border-radius:1rem 1rem 0 0;
+}
+#bottombar .primary-button {
+width: 4.5rem;
+height: 4.5rem;
+border-radius: 50%;
+background-color: var(--accent-color);
+color: var(--color-text);
+box-shadow: 0 .25rem .25rem rgba(0,0,0,0.2);
+border: none;
+outline: none;
+position: absolute;
+bottom: 2.5em;
+cursor: pointer;
+transition: all 0.2s;
+}
+#bottombar .primary-button:active {
+transform: scale(0.9);
+}
+#bottombar .primary-button:focus {
+outline: none;
+}
+#bottombar .secondary-button {
+width: 30%;
+height: 4rem;
+border-radius: 1rem;
+background-color: rgba(0,0,0,0);
+position: absolute;
+bottom: 0rem;
+box-shadow: none;
+color: var(--secondary-text-color);
+font-size: .8rem;
+transition: background-color var(--medium) ease-in-out;
+}
+#bottombar .secondary-button.selected {
+background-color: var(--secondary-color);
+}
+#bottombar .secondary-button#income-button   {
+left: 1rem;
+}
+#bottombar .secondary-button#outcome-button  {
+right: 1rem;
+}
 view#home {
 width: 100%;
 height: 100vh;
@@ -725,15 +779,23 @@ background: var(--background);
 view#home h1, p, b , footer{
 text-align: center;
 color: var(--text);
-font-family: Roboto, Helvetica, sans-serif;
 }
 view#home h1 {
-font-weight: bold;
+font-weight: 400;
 font-size: 2.2rem;
-margin-bottom: 1.5rem;
+width: 100%;
+}
+view#home h1#main-title{
+font-size: 2.15rem;
+margin-bottom: 1.25rem;
+text-align: left;
+padding: 0 1.5rem;
 }
 view#home * {
 transition: .35s;
+}
+view#home.showing {
+opacity: 1;
 }
 view#home #main-frame {
 margin: 0 auto;
@@ -745,22 +807,41 @@ align-items: center;
 height: 500px;
 }
 view#home #result {
-text-align: center;
+text-align: left;
 border-radius: 1rem;
-margin-top: 20px;
+margin-top: .1rem;
 padding: 20px;
+width: 100%;
 font-size: 1.2rem;
 }
-view#home input {
+view#home div#salary-input-panel {
+margin-bottom: .1rem;
+}
+view#home input#salary {
 border-radius: 1rem;
 border: none;
-width: 100%;
-max-width: 15rem;
+width: calc(100% - 5.75rem);
+max-width: calc(100% - 4.75rem);
 padding: .25rem .75rem;
 background: var(--input-bg);
-margin-bottom: 1rem;
-height: 2rem;
+height: 3rem;
 color: var(--text);
+font-size: 1.05rem;
+}
+view#home button#payment-number {
+border-radius: 3rem;
+width: 3rem;
+height: 3rem;
+box-shadow: none;
+padding: .55rem;
+margin: 0 .35rem;
+min-width: 3rem;
+outline: .1rem solid transparent;
+}
+view#home button#payment-number:focus,
+view#home button#payment-number:active,
+view#home button#payment-number:hover{
+background-color: var(--input-bg);
 }
 view#home button {
 border-radius: .35rem;
@@ -774,6 +855,26 @@ color: var(--text);
 view#home button:hover {
 background: var(--input-bg-hover);
 }
+view#home span#value-data {
+margin-bottom: .5rem;
+}
+view#home span#value-data label.label {
+font-size: 1.1rem;
+color: var(--text);
+}
+view#home span#value-data span.value {
+border-radius: 1rem;
+padding: .2rem .75rem;
+background-color: #eee;
+font-size: 1rem;
+margin-left: .5rem;
+user-select: none;
+transition: .15s;
+}
+:root[data-theme=dark] view#home span#value-data span.value {
+background-color: rgba(255,255,255,.055);
+color: #ccc
+}
 view#home .theme {
 position: absolute;
 top: 20px;
@@ -786,7 +887,7 @@ bottom: 20px;
 font-size: 1rem;
 }
 view#home #calc-menu {
-border-radius: .5rem;
+border-radius: 1rem;
 height: 100%;
 width: 20rem;
 min-width: 13rem;
@@ -795,7 +896,6 @@ padding: 1rem;
 background-color:rgba(0,0,0,.05);
 }
 :root[data-theme=dark] view#home #calc-menu {
-background-color: rgba(255,255,255,.05);
 color: var(--text);
 }
 view#home #calc-frame {
@@ -804,37 +904,41 @@ padding: 1rem;
 height: 100%;
 }
 view#home #calc-menu .options-title:first-child {
-margin-top: 0;
+margin-top: 0.2rem;
 }
 view#home #calc-menu .options-title {
 font-size: 1.25rem;
 font-weight: bold;
-margin: 1rem 0;
+margin: 1rem .4rem;
 }
 view#home:not(.mobile) #calc-menu .button-container {
 justify-content: left;
 flex-wrap: wrap;
 }
 view#home .menu-option {
-padding: .75rem 1rem;
-border-radius: .5rem;
-margin: 0;
-font-size: 1rem;
 background-color: rgba(0,0,0,.05);
 margin-bottom: .5rem;
 cursor: pointer;
-width: 80%;
+min-width: 6rem;
+width: calc(60% - .5rem);
 margin-left: .15%;
 box-shadow: none;
+font-size: 1rem;
+margin: .25rem;
+height: 3.5rem;
+border-radius: 5rem;
+padding: .5rem 2rem;
 }
-view#home .menu-option.selected {
+view#home .menu-option.selected, :root[data-theme=dark]  view#home .menu-option.selected {
 width: 97%;
+background: rgba(var(--RGB-accent-color),1);
+color: #434759;
 }
 view#home .menu-option:not(.selected):hover {
 background-color: rgba(0,0,0,.1);
 }
-:root[data-theme=dark] view#home .menu-option:hover {
-background-color: rgba(255,255,255,.1);
+:root[data-theme=dark] view#home .menu-option:not(.selected):hover {
+background-color: rgba(255,255,255,.2);
 }
 :root[data-theme=dark] view#home .menu-option {
 background-color: rgba(255,255,255,.05);
@@ -854,6 +958,10 @@ top: 20px;
 left: 20px;
 cursor: pointer;
 }
+view#home.mobile #calc-frame {
+align-items: center;
+justify-content: flex-start;
+}
 view#home.mobile #calc-menu{
 position: fixed;
 background: #fff;
@@ -869,24 +977,27 @@ transition: top .5s ease-out;
 view#home.mobile #calc-menu.show{
 top: 50%;
 }
+view#home.mobile #calc-menu .options-title {
+font-size: 1.15rem;
+}
 view#home.mobile #calc-menu .button-container {
 flex-wrap: wrap;
 }
-view#home.mobile #calc-menu .button-container .menu-option{
+view#home.mobile #calc-menu .button-container .menu-option {
 font-size: 1rem;
 margin: .25rem;
+height: 3.5rem;
+border-radius: 5rem;
+padding: .5rem 2rem;
 }
 view#home.mobile #calc-menu .button-container .region-option {
 min-width: 5rem;
-max-width: 20rem;
+max-width: 25rem;
 width: auto;
 }
 view#home.mobile #calc-menu .button-container .year-option {
 min-width: 5rem;
-max-width: 5rem;
-}
-view#home.mobile .menu-option.selected {
-background: rgba(0,0,0,.1);
+max-width: 7rem;
 }
 :root[data-theme=dark] view#home.mobile #calc-menu {
 background: #222;
@@ -908,15 +1019,21 @@ view#error h1#error-title {
 margin: 1.5rem 0;
 }
 :root {
---accent-color : #007ACC;
+--accent-color : #B4C5FF;
 --background: #fff;
 --input-bg: #f1f1f1;
 --input-bg-hover: #e1e1e1;
 --text: #222;
 }
 :root[data-theme="dark"] {
---background: #151515;
---input-bg: #202020;
+--background: #1A1A1A;
+--input-bg: #282828;
+--input-bg-hover: #303030;
+--text: #eee;
+}
+:root[data-theme="dark"] {
+--background: #1A1A1A;
+--input-bg: #282828;
 --input-bg-hover: #303030;
 --text: #eee;
 }

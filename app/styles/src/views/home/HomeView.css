@@ -9,17 +9,27 @@ view#home {
 view#home h1, p, b , footer{
     text-align: center;
     color: var(--text);
-    font-family: Roboto, Helvetica, sans-serif;
 }
 
 view#home h1 {
-    font-weight: bold;
+    font-weight: 400;
     font-size: 2.2rem;
-    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+view#home h1#main-title{
+    font-size: 2.15rem;
+    margin-bottom: 1.25rem;
+    text-align: left;
+    padding: 0 1.5rem;
 }
 
 view#home * {
     transition: .35s;
+}
+
+view#home.showing {
+    opacity: 1;
 }
 
 view#home #main-frame {
@@ -32,23 +42,45 @@ view#home #main-frame {
     height: 500px;
 }
 view#home #result {
-    text-align: center;
+    text-align: left;
     border-radius: 1rem;
-    margin-top: 20px;
+    margin-top: .1rem;
     padding: 20px;
+    width: 100%;
     font-size: 1.2rem;
 }
 
-view#home input {
+view#home div#salary-input-panel {
+    margin-bottom: .1rem;
+}
+
+view#home input#salary {
     border-radius: 1rem;
     border: none;
-    width: 100%;
-    max-width: 15rem;
+    width: calc(100% - 5.75rem);
+    max-width: calc(100% - 4.75rem);
     padding: .25rem .75rem;
     background: var(--input-bg);
-    margin-bottom: 1rem;
-    height: 2rem;
+    height: 3rem;
     color: var(--text);
+    font-size: 1.05rem;
+}
+
+view#home button#payment-number {
+    border-radius: 3rem;
+    width: 3rem;
+    height: 3rem;
+    box-shadow: none;
+    padding: .55rem;
+    margin: 0 .35rem;
+    min-width: 3rem;
+    outline: .1rem solid transparent;
+}
+
+view#home button#payment-number:focus,
+view#home button#payment-number:active,
+view#home button#payment-number:hover{
+    background-color: var(--input-bg);
 }
 
 view#home button {
@@ -65,6 +97,30 @@ view#home button:hover {
     background: var(--input-bg-hover);
 }
 
+view#home span#value-data {
+    margin-bottom: .5rem;
+}
+
+view#home span#value-data label.label {
+    font-size: 1.1rem;
+    color: var(--text);
+}
+
+view#home span#value-data span.value {
+    border-radius: 1rem;
+    padding: .2rem .75rem;
+    background-color: #eee;
+    font-size: 1rem;
+    margin-left: .5rem;
+    user-select: none;
+    transition: .15s;
+}
+
+:root[data-theme=dark] view#home span#value-data span.value {
+    background-color: rgba(255,255,255,.055);
+    color: #ccc
+}
+
 view#home .theme {
     position: absolute;
     top: 20px;
@@ -79,7 +135,7 @@ view#home footer {
 }
 
 view#home #calc-menu {
-    border-radius: .5rem;
+    border-radius: 1rem;
     height: 100%;
     width: 20rem;
     min-width: 13rem;
@@ -90,7 +146,6 @@ view#home #calc-menu {
 }
 
 :root[data-theme=dark] view#home #calc-menu {
-  background-color: rgba(255,255,255,.05);
   color: var(--text);
 }
 
@@ -102,12 +157,12 @@ view#home #calc-frame {
 
 
 view#home #calc-menu .options-title:first-child {
-    margin-top: 0;
+    margin-top: 0.2rem;
 }
 view#home #calc-menu .options-title {
     font-size: 1.25rem;
     font-weight: bold;
-    margin: 1rem 0;
+    margin: 1rem .4rem;
 }
 
 
@@ -117,28 +172,34 @@ view#home:not(.mobile) #calc-menu .button-container {
 }
 
 view#home .menu-option {
-    padding: .75rem 1rem;
-    border-radius: .5rem;
-    margin: 0;
-    font-size: 1rem;
     background-color: rgba(0,0,0,.05);
     margin-bottom: .5rem;
     cursor: pointer;
-    width: 80%;
+    min-width: 6rem;
+    width: calc(60% - .5rem);
     margin-left: .15%;
     box-shadow: none;
+
+    font-size: 1rem;
+    margin: .25rem;
+    height: 3.5rem;
+    border-radius: 5rem;
+    padding: .5rem 2rem;
 }
 
-view#home .menu-option.selected {   
+view#home .menu-option.selected, :root[data-theme=dark]  view#home .menu-option.selected {   
     width: 97%;
+    background: rgba(var(--RGB-accent-color),1);
+    color: #434759; 
 }
+
 
 view#home .menu-option:not(.selected):hover {
     background-color: rgba(0,0,0,.1);
 }
 
-:root[data-theme=dark] view#home .menu-option:hover {
-    background-color: rgba(255,255,255,.1);
+:root[data-theme=dark] view#home .menu-option:not(.selected):hover {
+    background-color: rgba(255,255,255,.2);
 }
 
 :root[data-theme=dark] view#home .menu-option {
@@ -163,6 +224,11 @@ view#home .settings {
     cursor: pointer;
 }
 
+view#home.mobile #calc-frame {
+    align-items: center;
+    justify-content: flex-start;
+}
+
 
 view#home.mobile #calc-menu{ 
     position: fixed;
@@ -181,29 +247,32 @@ view#home.mobile #calc-menu.show{
     top: 50%;
 }
 
+view#home.mobile #calc-menu .options-title {
+    font-size: 1.15rem;
+}
+
 view#home.mobile #calc-menu .button-container {
     flex-wrap: wrap;
 }
 
-view#home.mobile #calc-menu .button-container .menu-option{
+view#home.mobile #calc-menu .button-container .menu-option {
     font-size: 1rem;
     margin: .25rem;
+    height: 3.5rem;
+    border-radius: 5rem;
+    padding: .5rem 2rem;
 }
 
 
 view#home.mobile #calc-menu .button-container .region-option {
     min-width: 5rem;
-    max-width: 20rem;
+    max-width: 25rem;
     width: auto;
 }
 
 view#home.mobile #calc-menu .button-container .year-option {
     min-width: 5rem;
-    max-width: 5rem;
-}
-
-view#home.mobile .menu-option.selected {   
-    background: rgba(0,0,0,.1);
+    max-width: 7rem;
 }
 
 :root[data-theme=dark] view#home.mobile #calc-menu {
