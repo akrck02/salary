@@ -1,8 +1,9 @@
 import { Config } from "../../config/config.js";
 import { StringMap } from "../../lib/gtdf/data/strings.js";
 import { ViewCore } from "../../lib/gtdf/views/ViewCore.js";
-import IrpfService, { SalaryTime } from "../../services/irpf.service.js";
+import TaxService from "../../services/tax.service.js";
 import LanguageService from "../../services/language.service.js";
+import { SalaryTime } from "../../services/taxes/tax.model.js";
 
 
 export default class HomeCore extends ViewCore {
@@ -29,7 +30,7 @@ export default class HomeCore extends ViewCore {
      * @returns The irpf percentage
      */    
     static getIRPFPercentage(grossSalary : number) {
-        return IrpfService.getIrpf(grossSalary);
+        return TaxService.getTaxModel().getIrpf(grossSalary);
     }
 
     /**
@@ -38,7 +39,7 @@ export default class HomeCore extends ViewCore {
      * @returns The extra payment
      */
     static getExtraPayment(grossSalary : number) {
-        return IrpfService.extraPayment(grossSalary);
+        return TaxService.getTaxModel().extraPayment(grossSalary);
     }
 
     /**
@@ -47,7 +48,7 @@ export default class HomeCore extends ViewCore {
      * @returns 
      */
     static getExtraPaymentWithMultipleSalaries(salaries : SalaryTime[]) {
-        return IrpfService.extraPaymentWithMultipleSalaries(salaries);
+        return TaxService.getTaxModel().extraPaymentWithMultipleSalaries(salaries);
     }
 
 
@@ -57,14 +58,14 @@ export default class HomeCore extends ViewCore {
      * @returns The salary with taxes
      */
     static getSalary(grossSalary : number) {
-        return IrpfService.calcWithTaxes(grossSalary);
+        return TaxService.getTaxModel().calcWithTaxes(grossSalary);
     }
     
     /**
      * Get the irpf value
      */
     static cleanIrpfModel() {
-        IrpfService.clean();
+        TaxService.clean();
     }
 
     /**
@@ -98,13 +99,13 @@ export default class HomeCore extends ViewCore {
     } 
 
     /**
-     * Load the irpf model
+     * Load the tax model
      * @param region The region to load 
      * @param year The year to load
      * @returns True if the data is loaded, false otherwise
      */
-    public static async loadIRPFModel(region : string, year : string) {
-        return await IrpfService.load(region, year);
+    public static async loadTaxModel(region : string, year : string) {
+        return await TaxService.load(region, year);
     }
 
     /**
@@ -112,7 +113,7 @@ export default class HomeCore extends ViewCore {
      * @param paymentNumber  The payment number
      */
     public static setPaymentNumber(paymentNumber : number) {
-        IrpfService.setPaymentNumber(paymentNumber);
+        TaxService.getTaxModel().setPaymentNumber(paymentNumber);
     }
    
 

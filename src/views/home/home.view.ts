@@ -36,8 +36,8 @@ export default class HomeView extends ViewUI {
     private static readonly MENU_OPTION_CLASS = "menu-option";
     private static readonly REGION_OPTION_CLASS = "region-option";
     private static readonly YEAR_OPTION_CLASS = "year-option";
+    private static readonly LANG_OPTION_CLASS = "lang-option";
     private static readonly SELECTED_CLASS = "selected";
-    private static readonly THEME_CLASS = "theme";
 
     private result : UIComponent; 
 
@@ -54,11 +54,27 @@ export default class HomeView extends ViewUI {
         HomeCore.region = params[0] || HomeView.DEFAULT_REGION;
         HomeCore.year = params[1] || `${new Date().getFullYear()}`;
         HomeCore.grossSalary = +params[2] || HomeView.MIN_SALARY;
-
+        
         Config.setTitle(`${Config.Base.app_name} - ${HomeCore.grossSalary > 0 ? HomeCore.grossSalary + "€" : Text.home.title}`);
 
         if(Browser.isSmallDevice()){
             this.element.classList.add(HomeView.MOBILE_CLASS);
+
+            let scrollstarted;
+            this.setEvents({
+                touchmove: (event) => {
+                   
+                    if(Date.now() - scrollstarted < 1000){
+                        event.preventDefault();
+                        return;
+                    }
+
+
+                    scrollstarted = Date.now();
+                    this.toggleMobileMenu();
+                    
+                }
+            });
         }
 
         const calcView = new UIComponent({
@@ -79,8 +95,6 @@ export default class HomeView extends ViewUI {
         calcMenu.appendTo(this);
         calcView.appendTo(this);
         this.appendTo(container);
-
-        this.setClasses(["showing"]);
     }
 
 
@@ -134,7 +148,7 @@ export default class HomeView extends ViewUI {
                         });
 
                         regionButton.element.classList.add(HomeView.SELECTED_CLASS);
-                        await this.loadIRPFModel(HomeCore.region, HomeCore.year);
+                        await this.loadTaxModel(HomeCore.region, HomeCore.year);
                         this.showCalcResults((document.getElementById(HomeView.SALARY_INPUT_ID) as HTMLInputElement).valueAsNumber);
                         this.toggleMobileMenu();
                        
@@ -162,7 +176,7 @@ export default class HomeView extends ViewUI {
         
         HomeCore.AVAILABLE_YEARS.forEach(year => {
 
-            const yearButtonClasses = [Gtdf.BOX_ROW,Gtdf.BOX_CENTER,HomeView.MENU_OPTION_CLASS, HomeView.YEAR_OPTION_CLASS];
+            const yearButtonClasses = [Gtdf.BOX_ROW,Gtdf.BOX_CENTER,HomeView.MENU_OPTION_CLASS, HomeView.LANG_OPTION_CLASS];
             const selected = year == HomeCore.year
             if(selected)
                 yearButtonClasses.push(HomeView.SELECTED_CLASS);
@@ -175,14 +189,11 @@ export default class HomeView extends ViewUI {
                 
                     click: async () => {
                         HomeCore.year = year;
-                        const options = menu.element.querySelectorAll(`.${HomeView.MENU_OPTION_CLASS}.${HomeView.YEAR_OPTION_CLASS}`);
-
-                        options.forEach(option => {
-                            option.classList.remove(HomeView.SELECTED_CLASS);
-                        });
-
+                        const options = menu.element.querySelectorAll(`.${HomeView.MENU_OPTION_CLASS}.${HomeView.LANG_OPTION_CLASS}`);
+                        options.forEach(option => option.classList.remove(HomeView.SELECTED_CLASS));
+                        
                         yearButton.element.classList.add(HomeView.SELECTED_CLASS);
-                        await this.loadIRPFModel(HomeCore.region, HomeCore.year);
+                        await this.loadTaxModel(HomeCore.region, HomeCore.year);
                         this.showCalcResults((document.getElementById(HomeView.SALARY_INPUT_ID) as HTMLInputElement).valueAsNumber);
                         this.toggleMobileMenu();
                     }
@@ -211,7 +222,7 @@ export default class HomeView extends ViewUI {
         
         for (const lang in languages) {
         
-            const languageButtonClasses = [Gtdf.BOX_ROW,Gtdf.BOX_CENTER,HomeView.MENU_OPTION_CLASS];
+            const languageButtonClasses = [Gtdf.BOX_ROW,Gtdf.BOX_CENTER,HomeView.MENU_OPTION_CLASS, HomeView.YEAR_OPTION_CLASS];
             const selected = languages[lang] == Config.getLanguage()            
             
             if(selected)
@@ -306,51 +317,14 @@ export default class HomeView extends ViewUI {
             id: "footer",
             text: `Akrck02 / Rayxnor - ${new Date().getFullYear()}`,
         });
-
-        const darkTheme = Config.isDarkTheme();
-        const themeToggle = new UIComponent({
-            type: HTML.DIV,
-            text: MaterialIcons.get(darkTheme ? "light_mode": "dark_mode" ,
-            {
-                size: "24",
-                fill: darkTheme ? "#ccc" : "#222",
-            }).toHTML(),
-            classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER, HomeView.THEME_CLASS],
-        });
-
-        themeToggle.setEvents({
-            click: () => {
-                const theme = Config.toggleTheme();
-                themeToggle.element.innerHTML = MaterialIcons.get(`${theme}_mode`,{size: "24",fill: Config.isDarkTheme() ? "#fff" : "#222",}).toHTML()
-            }
-        });
-
-        const settingsButton = new UIComponent({
-            type: HTML.DIV,
-            text: MaterialIcons.get("tune",
-            {
-                size: "24",
-                fill: darkTheme ? "#ccc" : "#222",
-            }).toHTML(),
-            classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER, "settings"],
-        });
-
-        settingsButton.appendTo(mainFrame);
       
-        const view = this;
-        settingsButton.setEvents({
-            click: () => {
-                view.toggleMobileMenu();
-            }
-        });
-
         salaryInput.setEvents({
             input: () => {
                 this.showCalcResults(+salaryInput.getValue());
             }
         });
 
-        await this.loadIRPFModel(HomeCore.region, HomeCore.year);
+        await this.loadTaxModel(HomeCore.region, HomeCore.year);
 
         if(HomeCore.grossSalary > 0){
             await this.showCalcResults(HomeCore.grossSalary);
@@ -359,15 +333,14 @@ export default class HomeView extends ViewUI {
         title.appendTo(mainFrame);
         salaryInputPanel.appendTo(mainFrame);
         this.result.appendTo(mainFrame);
-        themeToggle.appendTo(mainFrame);
 
         mainFrame.appendTo(parent);
         footer.appendTo(parent);
     }
 
 
-    async loadIRPFModel(region : string, year : string) {
-        if(!await HomeCore.loadIRPFModel(HomeCore.region, HomeCore.year)){
+    async loadTaxModel(region : string, year : string) {
+        if(!await HomeCore.loadTaxModel(HomeCore.region, HomeCore.year)){
 
             HomeCore.cleanIrpfModel();
             this.result.clean();
