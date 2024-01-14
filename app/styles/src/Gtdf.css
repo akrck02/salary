@@ -3,7 +3,7 @@
 @import url("./views/_import.css");
 
 :root {
-    --accent-color : #007ACC;
+    --accent-color : #B4C5FF;
     --background: #fff;
     --input-bg: #f1f1f1;
     --input-bg-hover: #e1e1e1;
@@ -11,10 +11,17 @@
 }
 
 :root[data-theme="dark"] {
-    --background: #151515;
-    --input-bg: #202020;
+    --background: #1A1A1A;
+    --input-bg: #282828;
     --input-bg-hover: #303030;
     --text: #eee;
+}
+
+:root[data-theme="dark"] {
+  --background: #1A1A1A;
+  --input-bg: #282828;
+  --input-bg-hover: #303030;
+  --text: #eee;
 }
 
 body, view {

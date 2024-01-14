@@ -1,0 +1,11 @@
+{
+    "appName" : "Salary",
+    "title" : "Inicio",
+    "netSalary" : "Salario neto",
+    "salary" : "Salario",
+    "extra" : "Extra",
+    "incomeTax" : "IRPF",
+    "years" : "Años",
+    "regions" : "Regiones",
+    "languages" : "Idiomas"
+}
