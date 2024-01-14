@@ -1,18 +1,22 @@
-@import url("https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Ubuntu+Mono&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap');
+
 /*
 General variables of the framework
 */
 :root {
---font: 'Roboto light', sans-serif;
---font-light:   'Roboto thin', sans-serif;
---font-title:   'Roboto', sans-serif;
+
+--font : 'Open Sans', sans-serif;
+--font-light:   'Open Sans', sans-serif;
+--font-title:   'Open Sans', sans-serif;
+
 --font-console: 'Ubuntu Mono', monospace;
+
 --RGB-background:   250, 250, 250;
 --RGB-background-alternative:   247, 247, 247;
 --RGB-menu: 255, 255, 255;
 --RGB-contrast: 241, 241, 241;
---RGB-accent-color: 30, 144, 255;
+--RGB-accent-color: 180, 197, 255;
 --RGB-text-color:   64, 64, 64;
 --RGB-error-color:  235, 87, 87;
 --RGB-success-color:0, 200, 81;
@@ -45,9 +49,15 @@ General variables of the framework
 --super-slow:   1s;
 margin: 0;
 padding:0;
+font-size: 1.1rem;
 overflow-x: hidden;
 -webkit-tap-highlight-color: transparent;
 }
+
+:root[data-theme="dark"] {
+    --RGB-text-color:   255, 255, 255;
+}
+
 /*
 Accessibility feature for reduced motion
 */

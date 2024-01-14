@@ -1,0 +1,11 @@
+{
+    "appName" : "Salary",
+    "title" : "Home",
+    "netSalary" : "Net salary",
+    "salary" : "Salary",
+    "extra" : "Extra",
+    "incomeTax" : "PIT",
+    "years" : "Years",
+    "regions" : "Regions",
+    "languages" : "Languages"
+}
