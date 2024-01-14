@@ -19,7 +19,7 @@
         "language" : "resources/i18n",
         "images" : "resources/images",
         "icons" : "resources/icons",
-        "irpf_info" : "../resources/json/irpf/"
+        "irpf_info" : "resources/json/irpf/"
     },
 
     "views" : {
