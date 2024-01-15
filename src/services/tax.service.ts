@@ -31,6 +31,10 @@ export default class TaxService {
         return TaxService.taxModel;
     }
 
+    static isDefaultPaymentNumber() {    
+        return TaxService.taxModel.isDefaultPaymentNumber(); 
+    }
+
     /**
      * Clean the service variables
      */

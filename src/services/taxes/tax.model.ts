@@ -217,6 +217,10 @@ export default class TaxModel {
         this.taxesMonthNumber = taxesMonthNumber;
     }
 
+    isDefaultPaymentNumber() {
+        return this.paymentNumber === TaxModel.DEFAULT_PAYMENT_NUMBER;
+    }
+
     clean() {
         this.irpfRanges = undefined;
         this.taxes = undefined;

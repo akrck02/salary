@@ -115,6 +115,14 @@ export default class HomeCore extends ViewCore {
     public static setPaymentNumber(paymentNumber : number) {
         TaxService.getTaxModel().setPaymentNumber(paymentNumber);
     }
+
+    /**
+     * Get the payment number
+     * @returns The payment number
+     */
+    public static isDefaultPaymentNumber() {
+        return TaxService.getTaxModel().isDefaultPaymentNumber();
+    }
    
 
 }

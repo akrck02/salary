@@ -116,11 +116,16 @@ export default class HomeView extends ViewUI {
 
                 if ( Math.abs(deltaX) > Math.abs(deltaY) ) {
                     event.preventDefault();
+                    this.openMobileMenu();
                 }else{
-                   
+                   this.openMobileMenu();
                 }
+            },
+            click : () => {
+                console.log("click");
+                
+                this.toggleMobileMenu();
             }
-
         });
 
         const regionTitle = new UIComponent({
@@ -415,8 +420,10 @@ export default class HomeView extends ViewUI {
         const salaryResult = this.createValueDataComponent(Text.home.salary, `${salary}€`);
         salaryResult.appendTo(this.result);
 
-        const extraPaymentResult = this.createValueDataComponent(Text.home.extra, `${extraPayment}€`);
-        extraPaymentResult.appendTo(this.result);
+        if(HomeCore.isDefaultPaymentNumber()){
+            const extraPaymentResult = this.createValueDataComponent(Text.home.extra, `${extraPayment}€`);
+            extraPaymentResult.appendTo(this.result);
+        }
 
         const irpfPercentageResult = this.createValueDataComponent(Text.home.incomeTax, `${irpfPercentage}%`);
         irpfPercentageResult.appendTo(this.result);
@@ -454,6 +461,16 @@ export default class HomeView extends ViewUI {
     toggleMobileMenu() {
         const menu = document.getElementById("calc-menu");
         menu.classList.toggle("show");
+    }
+
+    openMobileMenu() {
+        const menu = document.getElementById("calc-menu");
+        menu.classList.add("show");
+    }
+
+    closeMobileMenu() {
+        const menu = document.getElementById("calc-menu");
+        menu.classList.remove("show");
     }
 
 }

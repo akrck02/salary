@@ -229,14 +229,13 @@ view#home.mobile #calc-menu{
     z-index: 999;
     height: 87%;
     width: 100%;
-    top: 80%;
+    top: 95%;
     box-shadow: 0rem 0rem 1rem rgba(0,0,0,.1);
     transition: top .5s ease-out;
 }
 
 /** a bar to drag **/
 view#home.mobile #calc-menu::after {
- 
     content: '';
     position: absolute;
     top: 1rem;
