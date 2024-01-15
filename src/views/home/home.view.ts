@@ -59,22 +59,6 @@ export default class HomeView extends ViewUI {
 
         if(Browser.isSmallDevice()){
             this.element.classList.add(HomeView.MOBILE_CLASS);
-
-            let scrollstarted;
-            this.setEvents({
-                touchmove: (event) => {
-                   
-                    if(Date.now() - scrollstarted < 1000){
-                        event.preventDefault();
-                        return;
-                    }
-
-
-                    scrollstarted = Date.now();
-                    this.toggleMobileMenu();
-                    
-                }
-            });
         }
 
         const calcView = new UIComponent({
@@ -107,6 +91,36 @@ export default class HomeView extends ViewUI {
             type: HTML.DIV,
             id: HomeView.MENU_ID,
             classes: [Gtdf.BOX_COLUMN],
+        });
+
+        let touchStartX = 0;
+        let touchStartY = 0;
+        
+
+
+        menu.setEvents({
+            touchstart: (event) => {
+                const firstTouch = this.getTouches(event)[0];                                      
+                touchStartX = firstTouch.clientX;                                      
+                touchStartY = firstTouch.clientY;    
+            },
+
+            touchmove: (event) => {
+                const currentTouch = this.getTouches(event)[0];   
+                
+                const touchMoveX = currentTouch.clientX
+                const touchMoveY = currentTouch.clientY;
+
+                const deltaX = touchMoveX - touchStartX;
+                const deltaY = touchMoveY - touchStartY;
+
+                if ( Math.abs(deltaX) > Math.abs(deltaY) ) {
+                    event.preventDefault();
+                }else{
+                   
+                }
+            }
+
         });
 
         const regionTitle = new UIComponent({
@@ -249,6 +263,12 @@ export default class HomeView extends ViewUI {
         languagesButtonContainer.appendTo(menu);
         menu.appendTo(parent);
     }
+
+
+    getTouches(evt) {
+        return evt.touches ||             // browser API
+               evt.originalEvent.touches; // jQuery
+    }          
 
 
     async showCalcView(parent : UIComponent) :  Promise<void> {
