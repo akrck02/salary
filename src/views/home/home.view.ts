@@ -71,7 +71,18 @@ export default class HomeView extends ViewUI {
             type: HTML.DIV,
             id: HomeView.CALC_MENU_ID,
             classes: [Gtdf.BOX_COLUMN,Gtdf.BOX_X_START,Gtdf.BOX_X_CENTER],
+            attributes : {
+                draggable : "true"
+            }
         });
+
+        calcMenu.setEvents({
+            click : ()=> {
+               this.toggleMobileMenu();
+                
+            }
+        });
+
 
         await this.showMenu(calcMenu);
         await this.showCalcView(calcView);
@@ -92,42 +103,7 @@ export default class HomeView extends ViewUI {
             id: HomeView.MENU_ID,
             classes: [Gtdf.BOX_COLUMN],
         });
-
-        let touchStartX = 0;
-        let touchStartY = 0;
         
-
-
-        menu.setEvents({
-            touchstart: (event) => {
-                const firstTouch = this.getTouches(event)[0];                                      
-                touchStartX = firstTouch.clientX;                                      
-                touchStartY = firstTouch.clientY;    
-            },
-
-            touchmove: (event) => {
-                const currentTouch = this.getTouches(event)[0];   
-                
-                const touchMoveX = currentTouch.clientX
-                const touchMoveY = currentTouch.clientY;
-
-                const deltaX = touchMoveX - touchStartX;
-                const deltaY = touchMoveY - touchStartY;
-
-                if ( Math.abs(deltaX) > Math.abs(deltaY) ) {
-                    event.preventDefault();
-                    this.openMobileMenu();
-                }else{
-                   this.openMobileMenu();
-                }
-            },
-            click : () => {
-                console.log("click");
-                
-                this.toggleMobileMenu();
-            }
-        });
-
         const regionTitle = new UIComponent({
             type: HTML.H3,
             text: `${Text.home.regions}`,
@@ -157,8 +133,10 @@ export default class HomeView extends ViewUI {
                 classes: regionButtonClasses,
                 events: {
 
-                    click: async () => {
-                    
+                    click: async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
                         HomeCore.region = region;
                         const options = menu.element.querySelectorAll(`.${HomeView.MENU_OPTION_CLASS}.${HomeView.REGION_OPTION_CLASS}`);
 
@@ -169,7 +147,7 @@ export default class HomeView extends ViewUI {
                         regionButton.element.classList.add(HomeView.SELECTED_CLASS);
                         await this.loadTaxModel(HomeCore.region, HomeCore.year);
                         this.showCalcResults((document.getElementById(HomeView.SALARY_INPUT_ID) as HTMLInputElement).valueAsNumber);
-                        this.toggleMobileMenu();
+                        //this.toggleMobileMenu();
                        
                     }
                 }              
@@ -206,7 +184,10 @@ export default class HomeView extends ViewUI {
                 classes: yearButtonClasses,
                 events: {
                 
-                    click: async () => {
+                    click: async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
                         HomeCore.year = year;
                         const options = menu.element.querySelectorAll(`.${HomeView.MENU_OPTION_CLASS}.${HomeView.LANG_OPTION_CLASS}`);
                         options.forEach(option => option.classList.remove(HomeView.SELECTED_CLASS));
@@ -214,7 +195,7 @@ export default class HomeView extends ViewUI {
                         yearButton.element.classList.add(HomeView.SELECTED_CLASS);
                         await this.loadTaxModel(HomeCore.region, HomeCore.year);
                         this.showCalcResults((document.getElementById(HomeView.SALARY_INPUT_ID) as HTMLInputElement).valueAsNumber);
-                        this.toggleMobileMenu();
+                        //this.toggleMobileMenu();
                     }
                 }
             });
@@ -253,7 +234,10 @@ export default class HomeView extends ViewUI {
                 classes: languageButtonClasses,
                 events: {
                 
-                    click: async () => {
+                    click: async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
                         HomeCore.setLanguage(languages[lang]);
                         await TextBundle.reloadSignal.emit();
                         SignalBuffer.search("changeView").emit("home");

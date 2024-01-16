@@ -127,12 +127,12 @@ view#home .theme {
 
 view#home footer {
     position: absolute;
-    bottom: 20px;
+    bottom: 1.5rem;
     font-size: 1rem;
 }
 
 view#home.mobile footer {
-    bottom: 1rem;
+    bottom: 4rem;
     font-size: .7rem;
 }
 
