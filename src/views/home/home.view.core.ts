@@ -4,6 +4,7 @@ import { ViewCore } from "../../lib/gtdf/views/ViewCore.js";
 import TaxService from "../../services/tax.service.js";
 import LanguageService from "../../services/language.service.js";
 import { SalaryTime } from "../../services/taxes/tax.model.js";
+import { Observable } from "../../lib/gtdf/core/observable/observer.js";
 
 
 export default class HomeCore extends ViewCore {
@@ -24,13 +25,15 @@ export default class HomeCore extends ViewCore {
     public static grossSalary : number;
     public static paymentNumber : number;
 
+    public static taxModel : Observable = new Observable();
+
     /**
      * Get the irpf percentage
      * @param grossSalary The gross salary
      * @returns The irpf percentage
      */    
     static getIRPFPercentage(grossSalary : number) {
-        return TaxService.getTaxModel().getIrpf(grossSalary);
+        return TaxService.getTaxModel().content.getIrpf(grossSalary);
     }
 
     /**
@@ -39,7 +42,7 @@ export default class HomeCore extends ViewCore {
      * @returns The extra payment
      */
     static getExtraPayment(grossSalary : number) {
-        return TaxService.getTaxModel().extraPayment(grossSalary);
+        return TaxService.getTaxModel().content.extraPayment(grossSalary);
     }
 
     /**
@@ -48,7 +51,7 @@ export default class HomeCore extends ViewCore {
      * @returns 
      */
     static getExtraPaymentWithMultipleSalaries(salaries : SalaryTime[]) {
-        return TaxService.getTaxModel().extraPaymentWithMultipleSalaries(salaries);
+        return TaxService.getTaxModel().content.extraPaymentWithMultipleSalaries(salaries);
     }
 
 
@@ -58,13 +61,16 @@ export default class HomeCore extends ViewCore {
      * @returns The salary with taxes
      */
     static getSalary(grossSalary : number) {
-        return TaxService.getTaxModel().calcWithTaxes(grossSalary);
+        return TaxService.getTaxModel().content.calcWithTaxes(grossSalary);
     }
     
     /**
      * Get the irpf value
      */
     static cleanIrpfModel() {
+        this.taxModel.content.irpf_ranges = {};
+        this.taxModel.content.taxes = {};
+
         TaxService.clean();
     }
 
@@ -113,7 +119,7 @@ export default class HomeCore extends ViewCore {
      * @param paymentNumber  The payment number
      */
     public static setPaymentNumber(paymentNumber : number) {
-        TaxService.getTaxModel().setPaymentNumber(paymentNumber);
+        HomeCore.taxModel.content.paymentNumber = paymentNumber;
     }
 
     /**
@@ -121,7 +127,7 @@ export default class HomeCore extends ViewCore {
      * @returns The payment number
      */
     public static isDefaultPaymentNumber() {
-        return TaxService.getTaxModel().isDefaultPaymentNumber();
+        return HomeCore.taxModel.content.isDefaultPaymentNumber();
     }
    
 

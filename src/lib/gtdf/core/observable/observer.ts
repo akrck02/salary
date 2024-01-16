@@ -20,6 +20,8 @@ export class Observable implements IObservable {
         this.content = {};
         this.content = new Proxy(this.content, {
             set: function(target, key, value) {
+                console.log("aldsklñ");
+                
                 target[key] = value;
                 a.notify();
                 return true;

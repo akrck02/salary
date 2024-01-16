@@ -1,3 +1,4 @@
+
 interface ITaxes {
     contingenciasComunes : number,
     atur : number,
@@ -18,11 +19,11 @@ export default class TaxModel {
     private static readonly DEFAULT_PAYMENT_NUMBER = 14;
     private static readonly DEFAULT_TAXES_MONTH_NUMBER = 12;
 
-    private paymentNumber : number;
-    private taxesMonthNumber : number;
+    public paymentNumber : number;
+    public taxesMonthNumber : number;
 
-    private irpfRanges : Map<string, number>;
-    private taxes : ITaxes;
+    public irpfRanges : Map<string, number>;
+    public taxes : ITaxes;
 
     constructor(
         paymentNumber : number = TaxModel.DEFAULT_PAYMENT_NUMBER , 
@@ -200,22 +201,6 @@ export default class TaxModel {
         return (salary * (this.taxes.fp / 100)) / this.taxesMonthNumber;
     }
 
-
-    setIrpfRanges(irpfRanges) {
-        this.irpfRanges = irpfRanges;
-    }
-    
-    setTaxes(taxes) {
-        this.taxes = taxes;
-    }
-
-    setPaymentNumber(paymentNumber : number) {        
-        this.paymentNumber = paymentNumber;
-    }
-
-    setTaxesMonthNumber(taxesMonthNumber : number) {        
-        this.taxesMonthNumber = taxesMonthNumber;
-    }
 
     isDefaultPaymentNumber() {
         return this.paymentNumber === TaxModel.DEFAULT_PAYMENT_NUMBER;

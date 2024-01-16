@@ -10,6 +10,9 @@ import { Browser } from "../../lib/gtdf/components/browser.js";
 import HomeCore from "./home.view.core.js";
 import MaterialIcons from "../../lib/gtdf/resources/MaterialIcons.js";
 import SignalBuffer from "../../core/signal.buffer.js";
+import { IObserver, Observable } from "../../lib/gtdf/core/observable/observer.js";
+import { ObservableUIComponent } from "../../lib/gtdf/core/observable/observable.uicomponent.js";
+import TaxModel from "../../services/taxes/tax.model.js";
 
 @Route(["","calculate", undefined])
 @Singleton()
@@ -47,6 +50,7 @@ export default class HomeView extends ViewUI {
             id: HomeView.ID,
             classes: [Gtdf.BOX_ROW, Gtdf.BOX_X_START, Gtdf.BOX_Y_CENTER], 
         });
+
     }
 
     public async show(params : string[], container : UIComponent) : Promise<void> {
@@ -79,7 +83,6 @@ export default class HomeView extends ViewUI {
         calcMenu.setEvents({
             click : ()=> {
                this.toggleMobileMenu();
-                
             }
         });
 
@@ -237,7 +240,7 @@ export default class HomeView extends ViewUI {
                     click: async (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        
+
                         HomeCore.setLanguage(languages[lang]);
                         await TextBundle.reloadSignal.emit();
                         SignalBuffer.search("changeView").emit("home");

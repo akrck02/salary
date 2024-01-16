@@ -1,9 +1,10 @@
 import { Config } from "../config/config.js";
 import TaxModel from "./taxes/tax.model.js";
+import TaxObservableModel from "./taxes/tax.observable.js";
 
 export default class TaxService {
 
-    private static taxModel = new TaxModel();
+    private static taxModel : TaxModel = new TaxModel();
 
     /**
      * Load the irpf data 
@@ -17,8 +18,8 @@ export default class TaxService {
             const irpfRanges = await fetch(`${Config.Path.irpf_info}${year}/irpfRanges-${province}.json`).then(response => response.json());
             const taxes = await fetch(`${Config.Path.irpf_info}${year}/taxes.json`).then(response => response.json());
 
-            this.taxModel.setIrpfRanges(irpfRanges);
-            this.taxModel.setTaxes(taxes);
+            this.taxModel.irpfRanges = irpfRanges;
+            this.taxModel.taxes = taxes;
 
             return true;
         } catch (error) {
@@ -27,13 +28,10 @@ export default class TaxService {
      
     }
 
-    static getTaxModel() : TaxModel {
-        return TaxService.taxModel;
-    }
-
     static isDefaultPaymentNumber() {    
         return TaxService.taxModel.isDefaultPaymentNumber(); 
     }
+
 
     /**
      * Clean the service variables
