@@ -98,16 +98,16 @@ view#home button:hover {
     background: var(--input-bg-hover);
 }
 
-view#home span#value-data {
+view#home span.value-data {
     margin-bottom: .5rem;
 }
 
-view#home span#value-data label.label {
+view#home span.value-data label.label {
     font-size: 1.1rem;
     color: var(--text);
 }
 
-view#home span#value-data span.value {
+view#home span.value-data span.value {
     border-radius: 1rem;
     padding: .2rem .75rem;
     background-color: rgba(255,255,255,.055);
@@ -144,7 +144,7 @@ view#home #calc-menu {
     color: var(--text);
     overflow-y: auto;
     padding: 1rem;
-    background-color:rgba(0,0,0,.05);
+    background-color:rgba(255,255,255,.035)
 }
 
 view#home #calc-frame {

@@ -48,12 +48,12 @@ export default class TaxModel {
      */
     calcWithTaxes(salary : number) : number {
 
+        this.checkIfDataIsLoaded();
+
         if(salary <= 0){
             return 0;
         }
 
-        this.checkIfDataIsLoaded();
-        
         const irpf = this.getIrpfValue(salary);
         const contingenciasComunes = this.getContingenciasComunesValue(salary);
         const atur = this.getAturValue(salary);
@@ -71,11 +71,11 @@ export default class TaxModel {
      */
     extraPayment(salary : number) : number {
 
+        this.checkIfDataIsLoaded();
+
         if(salary <= 0){
             return 0;
         }
-
-        this.checkIfDataIsLoaded();
 
         const irpf = this.getIrpfValue(salary);
         return Math.ceil(((salary / this.paymentNumber) - irpf) * 100) / 100;
@@ -85,12 +85,12 @@ export default class TaxModel {
 
     extraPaymentWithMultipleSalaries(salaries : SalaryTime[]) {
 
+        this.checkIfDataIsLoaded();
+
         if(salaries === undefined || salaries.length === 0) {
             return 0;
         }
 
-        this.checkIfDataIsLoaded();
-        
         // salario * dias / 180
         let totalSalary = 0;
         for (const salary of salaries) {
@@ -124,6 +124,8 @@ export default class TaxModel {
      * @returns {number} The irpf value
      */
     getIrpf(salary : number) : number {
+
+        this.checkIfDataIsLoaded();
 
         if(salary <= 0){
             return 0;
@@ -206,7 +208,7 @@ export default class TaxModel {
         return this.paymentNumber === TaxModel.DEFAULT_PAYMENT_NUMBER;
     }
 
-    clean() {
+    clear() {
         this.irpfRanges = undefined;
         this.taxes = undefined;
     }

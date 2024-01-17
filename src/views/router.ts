@@ -60,7 +60,6 @@ export default class Router implements IObserver {
     async update(data?: any): Promise<void> {
 
         console.debug(data);
-
         console.debug(`Router update to /${data.view}`);
        
         let params = [];

@@ -1,134 +1,151 @@
-import { Config } from "../../config/config.js";
-import { StringMap } from "../../lib/gtdf/data/strings.js";
 import { ViewCore } from "../../lib/gtdf/views/ViewCore.js";
 import TaxService from "../../services/tax.service.js";
-import LanguageService from "../../services/language.service.js";
-import { SalaryTime } from "../../services/taxes/tax.model.js";
-import { Observable } from "../../lib/gtdf/core/observable/observer.js";
+import { Signal } from "../../lib/gtdf/core/signals/signal.js";
+import { ISingleton, Singleton } from "../../lib/gtdf/decorators/Singleton.js";
+import { StaticImplements } from "../../lib/gtdf/core/static/static.interface.js";
+import { Text } from "../../lang/text.js";
 
-
+@Singleton()
+@StaticImplements<ISingleton<HomeCore>>()
 export default class HomeCore extends ViewCore {
+    public static _instance: HomeCore;
+    public static instance;
 
-    static readonly AVAILABLE_REGIONS ={
-        "paisvasco": "País Vasco",
-        //"catalunya": "Catalunya",
-    }
+    public static readonly updateTaxesUISignal: Signal = new Signal(
+        "updateTaxesUI"
+    );
+    public static readonly taxesCannotBeLoadedSignal: Signal = new Signal(
+        "taxesCannotBeLoaded"
+    );
+    public static readonly taxCalculationRequestedSignal: Signal = new Signal(
+        "taxCalculationRequested"
+    );
 
-    static readonly AVAILABLE_YEARS = [
-		"2024",
-        "2023",
-        "2022",
-    ]
+    public static readonly taxModelChangedSignal: Signal = new Signal(
+        "taxModelChanged"
+    );
+    public static readonly salaryChangedSignal: Signal = new Signal(
+        "salaryChanged"
+    );
+    public static readonly paymentNumberChangedSignal: Signal = new Signal(
+        "paymentNumberChanged"
+    );
 
-    public static region : string;
-    public static year : string;
-    public static grossSalary : number;
-    public static paymentNumber : number;
+    public static readonly AVAILABLE_REGIONS = [
+        "paisvasco",
+    ];
 
-    public static taxModel : Observable = new Observable();
+    public static readonly AVAILABLE_YEARS = ["2024", "2023", "2022"];
 
-    /**
-     * Get the irpf percentage
-     * @param grossSalary The gross salary
-     * @returns The irpf percentage
-     */    
-    static getIRPFPercentage(grossSalary : number) {
-        return TaxService.getTaxModel().content.getIrpf(grossSalary);
-    }
+    public static readonly MAX_SALARY = 1000000;
+    public static readonly MIN_SALARY = 0;
+    public static readonly DEFAULT_REGION = "paisvasco";
+    public static readonly AVAILABLE_PAYMENT_NUMBERS = [14, 12];
 
-    /**
-     * Get the extra payment
-     * @param grossSalary The gross salary
-     * @returns The extra payment
-     */
-    static getExtraPayment(grossSalary : number) {
-        return TaxService.getTaxModel().content.extraPayment(grossSalary);
-    }
+    private region: string;
+    private year: string;
+    private grossSalary: number;
+    private paymentNumber: number;
 
-    /**
-     * 
-     * @param salaries 
-     * @returns 
-     */
-    static getExtraPaymentWithMultipleSalaries(salaries : SalaryTime[]) {
-        return TaxService.getTaxModel().content.extraPaymentWithMultipleSalaries(salaries);
-    }
+    constructor() {
+        super();
+        this.region = HomeCore.DEFAULT_REGION;
+        this.year = HomeCore.AVAILABLE_YEARS[0];
+        this.grossSalary = HomeCore.MIN_SALARY;
+        this.paymentNumber = HomeCore.AVAILABLE_PAYMENT_NUMBERS[0];
 
+        HomeCore.taxModelChangedSignal.subscribe({
+            update: async (data) => {
+                this.region = data.region;
+                this.year = data.year;
+                const loaded = await this.loadTaxModel();
 
-    /**
-     * Get the salary with taxes
-     * @param grossSalary The gross salary
-     * @returns The salary with taxes
-     */
-    static getSalary(grossSalary : number) {
-        return TaxService.getTaxModel().content.calcWithTaxes(grossSalary);
-    }
-    
-    /**
-     * Get the irpf value
-     */
-    static cleanIrpfModel() {
-        this.taxModel.content.irpf_ranges = {};
-        this.taxModel.content.taxes = {};
+                if (!loaded) {
+                    await HomeCore.taxesCannotBeLoadedSignal.emit(
+                        Text.error.cannotLoadTax
+                    );
+                    TaxService.get().clear();
+                    return;
+                }
 
-        TaxService.clean();
-    }
-
-    /**
-     * Get available languages to add to the select
-     * @returns The available languages
-     */
-    public static getLanguages() : StringMap {
-        const languages = LanguageService.getAvailableLanguages();
-        const formatted = {};
-
-        const list = Object.keys(languages) 
-
-        list.forEach(lang => {
-            formatted[lang.toUpperCase().substring(0,1) + lang.toLowerCase().substring(1)] = languages[lang];
+                const taxes = await this.calculateTaxes();
+                await HomeCore.updateTaxesUISignal.emit(taxes);
+            },
         });
 
-        return formatted;
-    }
+        HomeCore.salaryChangedSignal.subscribe({
+            update: async (data) => {
+                try {
+                    this.grossSalary = data;
+                    const taxes = await this.calculateTaxes();
+                    await HomeCore.updateTaxesUISignal.emit(taxes);
+                } catch (error) {
+                    await HomeCore.taxesCannotBeLoadedSignal.emit(
+                        Text.error.cannotLoadTax
+                    );
+                }
+            },
+        });
 
-    public static getAvailableLanguagesWithNames() : StringMap {
-        const languages = LanguageService.getAvailableLanguages();
-        return languages;
+        HomeCore.paymentNumberChangedSignal.subscribe({
+            update: async (data) => {
+
+                try {
+                    this.paymentNumber = data;
+                    TaxService.get().paymentNumber = data;
+
+                    const taxes = await this.calculateTaxes();
+                    await HomeCore.updateTaxesUISignal.emit(taxes);
+                } catch (error) {
+                    await HomeCore.taxesCannotBeLoadedSignal.emit(
+                        Text.error.cannotLoadTax
+                    );
+                }
+            },
+        });
     }
 
     /**
-     * Set the app language and reload
-     * @param selected The selected language
+     * Calculate the salary and the taxes
+     * and emit the results to the UI
+     * @returns The taxes result
      */
-    public static setLanguage(selected :string){        
-        Config.setLanguage(selected);
-    } 
+    public async calculateTaxes(): Promise<ITaxesResult> {
+        return {
+            irpfPercentage: TaxService.get().getIrpf(this.grossSalary),
+            extraPayment: TaxService.get().extraPayment(this.grossSalary),
+            salary: TaxService.get().calcWithTaxes(this.grossSalary),
+        };
+    }
 
     /**
      * Load the tax model
-     * @param region The region to load 
+     * @param region The region to load
      * @param year The year to load
      * @returns True if the data is loaded, false otherwise
      */
-    public static async loadTaxModel(region : string, year : string) {
-        return await TaxService.load(region, year);
+    public async loadTaxModel() {
+        return await TaxService.load(this.region, this.year);
     }
 
     /**
-     * Set the payment number
-     * @param paymentNumber  The payment number
+     * Check if the tax model is loaded
+     * @returns if the payment number is the default one
      */
-    public static setPaymentNumber(paymentNumber : number) {
-        HomeCore.taxModel.content.paymentNumber = paymentNumber;
+    public isDefaultPaymentNumber(): boolean {
+        return this.paymentNumber === HomeCore.AVAILABLE_PAYMENT_NUMBERS[0];
     }
+}
 
-    /**
-     * Get the payment number
-     * @returns The payment number
-     */
-    public static isDefaultPaymentNumber() {
-        return HomeCore.taxModel.content.isDefaultPaymentNumber();
-    }
-   
-
+/**
+ * The taxes result interface
+ * @interface ITaxesResult
+ * @property {number} irpfPercentage The irpf percentage
+ * @property {number} extraPayment The extra payment
+ * @property {number} salary The salary without taxes
+ */
+export interface ITaxesResult {
+    irpfPercentage: number;
+    extraPayment: number;
+    salary: number;
 }

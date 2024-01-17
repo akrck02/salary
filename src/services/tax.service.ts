@@ -25,7 +25,11 @@ export default class TaxService {
         } catch (error) {
             return false;
         }
-     
+
+    }
+
+    static get() {
+        return this.taxModel;
     }
 
     static isDefaultPaymentNumber() {    
@@ -37,7 +41,7 @@ export default class TaxService {
      * Clean the service variables
      */
     static clean() {
-        TaxService.taxModel.clean();
+        TaxService.taxModel.clear();
     }
 
 
