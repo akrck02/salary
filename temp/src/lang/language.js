@@ -29,7 +29,7 @@ export function getLanguage(locale) {
  */
 export function getLanguageName(locale) {
     if (!locale) {
-        return Language.ENGLISH;
+        return Language.SPANISH;
     }
     const keys = Object.keys(Language);
     for (let i = 0; i < keys.length; i++) {

@@ -39,7 +39,7 @@ export function getLanguage(locale : string) : string {
 export function getLanguageName(locale: string) : string {
     
     if(!locale){
-        return Language.ENGLISH;
+        return Language.SPANISH;
     }
 
     const keys = Object.keys(Language);    

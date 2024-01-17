@@ -4,13 +4,6 @@
 
 :root {
     --accent-color : #B4C5FF;
-    --background: #fff;
-    --input-bg: #f1f1f1;
-    --input-bg-hover: #e1e1e1;
-    --text: #222;
-}
-
-:root[data-theme="dark"] {
     --background: #1A1A1A;
     --input-bg: #282828;
     --input-bg-hover: #303030;
@@ -22,6 +15,10 @@
   --input-bg: #282828;
   --input-bg-hover: #303030;
   --text: #eee;
+}
+
+:root[data-grayscale="true"] body {
+  filter: grayscale(1);
 }
 
 body, view {
@@ -38,7 +35,7 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-/* Firefox */
 input[type=number] {
+  appearance: textfield;
   -moz-appearance: textfield;
 }

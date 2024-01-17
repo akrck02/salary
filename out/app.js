@@ -943,13 +943,13 @@
         return (constructor) => { };
     }
 
-    var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var __decorate$7 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
         else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
-    var __metadata$4 = (undefined && undefined.__metadata) || function (k, v) {
+    var __metadata$7 = (undefined && undefined.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     let ViewUI = class ViewUI extends UIComponent {
@@ -964,18 +964,18 @@
             return this.routes.includes(name);
         }
     };
-    ViewUI = __decorate$4([
+    ViewUI = __decorate$7([
         StaticImplements(),
-        __metadata$4("design:paramtypes", [Object])
+        __metadata$7("design:paramtypes", [Object])
     ], ViewUI);
 
-    var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var __decorate$6 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
         else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
-    var __metadata$3 = (undefined && undefined.__metadata) || function (k, v) {
+    var __metadata$6 = (undefined && undefined.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var ErrorView_1;
@@ -1024,10 +1024,10 @@
     ErrorView.ID = "error";
     ErrorView.IMAGE_ID = "error-img";
     ErrorView.TITLE_ID = "error-title";
-    ErrorView = ErrorView_1 = __decorate$3([
+    ErrorView = ErrorView_1 = __decorate$6([
         Route("error"),
         Singleton(),
-        __metadata$3("design:paramtypes", [])
+        __metadata$6("design:paramtypes", [])
     ], ErrorView);
     var ErrorView$1 = ErrorView;
 
@@ -1095,7 +1095,8 @@
         "home",
         "errors",
         "info",
-        "languages"
+        "languages",
+        "regions"
     ];
     TextBundle.reloadSignal = new Signal("reload_text");
     const Text = new Proxy(TextBundle.instance, {
@@ -1208,21 +1209,15 @@
     class ViewCore {
     }
 
-    class IrpfService {
-        /**
-         * Load the irpf data
-         * @param province The province to load the data
-         * @param year The year to load the data
-         * @returns {boolean} True if the data is loaded, false otherwise
-         */
-        static async load(province, year) {
-            try {
-                IrpfService.IRPF_RANGES = await fetch(`${Config.Path.irpf_info}${year}/irpfRanges-${province}.json`).then(response => response.json());
-                IrpfService.TAXES = await fetch(`${Config.Path.irpf_info}${year}/taxes.json`).then(response => response.json());
-                return true;
-            }
-            catch (error) {
-                return false;
+    //BRUTO/12 < x
+    class TaxModel {
+        constructor(paymentNumber = TaxModel.DEFAULT_PAYMENT_NUMBER, taxesMonthNumber = TaxModel.DEFAULT_TAXES_MONTH_NUMBER) {
+            this.paymentNumber = paymentNumber;
+            this.taxesMonthNumber = taxesMonthNumber;
+        }
+        checkIfDataIsLoaded() {
+            if (this.irpfRanges === undefined || this.taxes === undefined) {
+                throw new Error("IRPF_RANGES or TAXES are undefined, please load the data first");
             }
         }
         /**
@@ -1230,41 +1225,35 @@
          * @param salary The salary itself
          * @returns {number} The salary without taxes
          */
-        static calcWithTaxes(salary) {
+        calcWithTaxes(salary) {
+            this.checkIfDataIsLoaded();
             if (salary <= 0) {
                 return 0;
             }
-            if (IrpfService.IRPF_RANGES === undefined || IrpfService.TAXES === undefined) {
-                throw new Error("IRPF_RANGES or TAXES are undefined, please load the data first");
-            }
-            const irpf = IrpfService.getIrpfValue(salary);
-            const contingenciasComunes = IrpfService.getContingenciasComunesValue(salary);
-            const atur = IrpfService.getAturValue(salary);
-            const fp = IrpfService.getFpValue(salary);
+            const irpf = this.getIrpfValue(salary);
+            const contingenciasComunes = this.getContingenciasComunesValue(salary);
+            const atur = this.getAturValue(salary);
+            const fp = this.getFpValue(salary);
             const total_deductions = (irpf + contingenciasComunes + atur + fp);
-            return Math.ceil(((salary / IrpfService.PAYMENT_NUMBER) - total_deductions) * 100) / 100;
+            return Math.ceil(((salary / this.paymentNumber) - total_deductions) * 100) / 100;
         }
         /**
          * Calculate the extra payment
          * @param salary The salary itself
          * @returns {number} The extra payment
          */
-        static extraPayment(salary) {
+        extraPayment(salary) {
+            this.checkIfDataIsLoaded();
             if (salary <= 0) {
                 return 0;
             }
-            if (IrpfService.IRPF_RANGES === undefined || IrpfService.TAXES === undefined) {
-                throw new Error("IRPF_RANGES or TAXES are undefined, please load the data first");
-            }
-            const irpf = IrpfService.getIrpfValue(salary);
-            return Math.ceil(((salary / IrpfService.PAYMENT_NUMBER) - irpf) * 100) / 100;
+            const irpf = this.getIrpfValue(salary);
+            return Math.ceil(((salary / this.paymentNumber) - irpf) * 100) / 100;
         }
-        static extraPaymentWithMultipleSalaries(salaries) {
+        extraPaymentWithMultipleSalaries(salaries) {
+            this.checkIfDataIsLoaded();
             if (salaries === undefined || salaries.length === 0) {
                 return 0;
-            }
-            if (IrpfService.IRPF_RANGES === undefined || IrpfService.TAXES === undefined) {
-                throw new Error("IRPF_RANGES or TAXES are undefined, please load the data first");
             }
             // salario * dias / 180
             let totalSalary = 0;
@@ -1275,7 +1264,7 @@
                 if (salary.startDate > salary.endDate) {
                     throw new Error("Start date is greater than end date");
                 }
-                let extraPayment = IrpfService.extraPayment(salary.salary);
+                let extraPayment = this.extraPayment(salary.salary);
                 // every month has 30 days
                 let totalDays = (salary.endDate.getMonth() - salary.startDate.getMonth()) * 30;
                 totalDays -= salary.startDate.getDate();
@@ -1290,18 +1279,19 @@
          * @param {number} salary The salary itself
          * @returns {number} The irpf value
          */
-        static getIrpf(salary) {
+        getIrpf(salary) {
+            this.checkIfDataIsLoaded();
             if (salary <= 0) {
                 return 0;
             }
             let irpf = undefined;
             // Get irpf on ranges
-            for (const minimum in IrpfService.IRPF_RANGES) {
+            for (const minimum in this.irpfRanges) {
                 const range = parseInt(minimum);
                 if (salary <= range) {
                     return irpf;
                 }
-                irpf = IrpfService.IRPF_RANGES[minimum];
+                irpf = this.irpfRanges[minimum];
             }
             return irpf;
         }
@@ -1310,113 +1300,204 @@
          * @param {number} salary The salary itself
          * @returns {number} The irpf value calculated on the salary and the payment number
          */
-        static getIrpfValue(salary) {
+        getIrpfValue(salary) {
             if (salary <= 0) {
                 return 0;
             }
-            return (salary * (IrpfService.getIrpf(salary) / 100)) / IrpfService.PAYMENT_NUMBER;
+            return (salary * (this.getIrpf(salary) / 100)) / this.paymentNumber;
         }
         /**
          * Get the contingencias comunes value on the salary
          * @param {number} salary The salary itself
          * @returns {number} The contingencias comunes value calculated on the salary and the payment number
          */
-        static getContingenciasComunesValue(salary) {
+        getContingenciasComunesValue(salary) {
             if (salary <= 0) {
                 return 0;
             }
-            return (salary * (IrpfService.TAXES.CONTINGENCIAS_COMUNES / 100)) / IrpfService.PAYMENT_NUMBER_TAXES;
+            return (salary * (this.taxes.contingenciasComunes / 100)) / this.taxesMonthNumber;
         }
         /**
          * Get the atur value on the salary
          * @param {number} salary The salary itself
          * @returns {number} The atur value calculated on the salary and the payment number
          */
-        static getAturValue(salary) {
+        getAturValue(salary) {
             if (salary <= 0) {
                 return 0;
             }
-            return (salary * (IrpfService.TAXES.ATUR / 100)) / IrpfService.PAYMENT_NUMBER_TAXES;
+            return (salary * (this.taxes.atur / 100)) / this.taxesMonthNumber;
         }
         /**
          * Get the fp value on the salary
          * @param {*} salary The salary itself
          * @returns {number} The fp value calculated on the salary and the payment number
          */
-        static getFpValue(salary) {
+        getFpValue(salary) {
             if (salary <= 0) {
                 return 0;
             }
-            return (salary * (IrpfService.TAXES.FP / 100)) / IrpfService.PAYMENT_NUMBER_TAXES;
+            return (salary * (this.taxes.fp / 100)) / this.taxesMonthNumber;
         }
-        static setPaymentNumber(paymentNumber) {
-            IrpfService.PAYMENT_NUMBER = paymentNumber;
+        isDefaultPaymentNumber() {
+            return this.paymentNumber === TaxModel.DEFAULT_PAYMENT_NUMBER;
+        }
+        clear() {
+            this.irpfRanges = undefined;
+            this.taxes = undefined;
+        }
+    }
+    TaxModel.DEFAULT_PAYMENT_NUMBER = 14;
+    TaxModel.DEFAULT_TAXES_MONTH_NUMBER = 12;
+
+    class TaxService {
+        /**
+         * Load the irpf data
+         * @param province The province to load the data
+         * @param year The year to load the data
+         * @returns {boolean} True if the data is loaded, false otherwise
+         */
+        static async load(province, year) {
+            try {
+                const irpfRanges = await fetch(`${Config.Path.irpf_info}${year}/irpfRanges-${province}.json`).then(response => response.json());
+                const taxes = await fetch(`${Config.Path.irpf_info}${year}/taxes.json`).then(response => response.json());
+                this.taxModel.irpfRanges = irpfRanges;
+                this.taxModel.taxes = taxes;
+                return true;
+            }
+            catch (error) {
+                return false;
+            }
+        }
+        static get() {
+            return this.taxModel;
+        }
+        static isDefaultPaymentNumber() {
+            return TaxService.taxModel.isDefaultPaymentNumber();
         }
         /**
          * Clean the service variables
          */
         static clean() {
-            IrpfService.IRPF_RANGES = undefined;
-            IrpfService.TAXES = undefined;
+            TaxService.taxModel.clear();
         }
     }
-    IrpfService.PAYMENT_NUMBER = 14;
-    IrpfService.PAYMENT_NUMBER_TAXES = 12;
+    TaxService.taxModel = new TaxModel();
+
+    var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata$5 = (undefined && undefined.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var HomeCore_1;
+    let HomeCore = HomeCore_1 = class HomeCore extends ViewCore {
+        constructor() {
+            super();
+            this.region = HomeCore_1.DEFAULT_REGION;
+            this.year = HomeCore_1.AVAILABLE_YEARS[0];
+            this.grossSalary = HomeCore_1.MIN_SALARY;
+            this.paymentNumber = HomeCore_1.AVAILABLE_PAYMENT_NUMBERS[0];
+            HomeCore_1.taxModelChangedSignal.subscribe({
+                update: async (data) => {
+                    this.region = data.region;
+                    this.year = data.year;
+                    const loaded = await this.loadTaxModel();
+                    if (!loaded) {
+                        await HomeCore_1.taxesCannotBeLoadedSignal.emit(Text.error.cannotLoadTax);
+                        TaxService.get().clear();
+                        return;
+                    }
+                    const taxes = await this.calculateTaxes();
+                    await HomeCore_1.updateTaxesUISignal.emit(taxes);
+                },
+            });
+            HomeCore_1.salaryChangedSignal.subscribe({
+                update: async (data) => {
+                    try {
+                        this.grossSalary = data;
+                        const taxes = await this.calculateTaxes();
+                        await HomeCore_1.updateTaxesUISignal.emit(taxes);
+                    }
+                    catch (error) {
+                        await HomeCore_1.taxesCannotBeLoadedSignal.emit(Text.error.cannotLoadTax);
+                    }
+                },
+            });
+            HomeCore_1.paymentNumberChangedSignal.subscribe({
+                update: async (data) => {
+                    try {
+                        this.paymentNumber = data;
+                        TaxService.get().paymentNumber = data;
+                        const taxes = await this.calculateTaxes();
+                        await HomeCore_1.updateTaxesUISignal.emit(taxes);
+                    }
+                    catch (error) {
+                        await HomeCore_1.taxesCannotBeLoadedSignal.emit(Text.error.cannotLoadTax);
+                    }
+                },
+            });
+        }
+        /**
+         * Calculate the salary and the taxes
+         * and emit the results to the UI
+         * @returns The taxes result
+         */
+        async calculateTaxes() {
+            return {
+                irpfPercentage: TaxService.get().getIrpf(this.grossSalary),
+                extraPayment: TaxService.get().extraPayment(this.grossSalary),
+                salary: TaxService.get().calcWithTaxes(this.grossSalary),
+            };
+        }
+        /**
+         * Load the tax model
+         * @param region The region to load
+         * @param year The year to load
+         * @returns True if the data is loaded, false otherwise
+         */
+        async loadTaxModel() {
+            return await TaxService.load(this.region, this.year);
+        }
+        /**
+         * Check if the tax model is loaded
+         * @returns if the payment number is the default one
+         */
+        isDefaultPaymentNumber() {
+            return this.paymentNumber === HomeCore_1.AVAILABLE_PAYMENT_NUMBERS[0];
+        }
+    };
+    HomeCore.updateTaxesUISignal = new Signal("updateTaxesUI");
+    HomeCore.taxesCannotBeLoadedSignal = new Signal("taxesCannotBeLoaded");
+    HomeCore.taxCalculationRequestedSignal = new Signal("taxCalculationRequested");
+    HomeCore.taxModelChangedSignal = new Signal("taxModelChanged");
+    HomeCore.salaryChangedSignal = new Signal("salaryChanged");
+    HomeCore.paymentNumberChangedSignal = new Signal("paymentNumberChanged");
+    HomeCore.AVAILABLE_REGIONS = [
+        "paisvasco",
+    ];
+    HomeCore.AVAILABLE_YEARS = ["2024", "2023", "2022"];
+    HomeCore.MAX_SALARY = 1000000;
+    HomeCore.MIN_SALARY = 0;
+    HomeCore.DEFAULT_REGION = "paisvasco";
+    HomeCore.AVAILABLE_PAYMENT_NUMBERS = [14, 12];
+    HomeCore = HomeCore_1 = __decorate$5([
+        Singleton(),
+        StaticImplements(),
+        __metadata$5("design:paramtypes", [])
+    ], HomeCore);
+    var HomeCore$1 = HomeCore;
 
     class LanguageService {
-        /**et available languages for the application
-         * @returns The available language list
-         */
-        static getAvailableLanguages() {
-            return Language;
-        }
-    }
-
-    class HomeCore extends ViewCore {
         /**
-         * Get the irpf percentage
-         * @param grossSalary The gross salary
-         * @returns The irpf percentage
-         */
-        static getIRPFPercentage(grossSalary) {
-            return IrpfService.getIrpf(grossSalary);
-        }
-        /**
-         * Get the extra payment
-         * @param grossSalary The gross salary
-         * @returns The extra payment
-         */
-        static getExtraPayment(grossSalary) {
-            return IrpfService.extraPayment(grossSalary);
-        }
-        /**
-         *
-         * @param salaries
-         * @returns
-         */
-        static getExtraPaymentWithMultipleSalaries(salaries) {
-            return IrpfService.extraPaymentWithMultipleSalaries(salaries);
-        }
-        /**
-         * Get the salary with taxes
-         * @param grossSalary The gross salary
-         * @returns The salary with taxes
-         */
-        static getSalary(grossSalary) {
-            return IrpfService.calcWithTaxes(grossSalary);
-        }
-        /**
-         * Get the irpf value
-         */
-        static cleanIrpfModel() {
-            IrpfService.clean();
-        }
-        /**
-         * Get available languages to add to the select
-         * @returns The available languages
-         */
+      * Get available languages to add to the select
+      * @returns The available languages
+      */
         static getLanguages() {
-            const languages = LanguageService.getAvailableLanguages();
+            const languages = Language;
             const formatted = {};
             const list = Object.keys(languages);
             list.forEach(lang => {
@@ -1424,8 +1505,12 @@
             });
             return formatted;
         }
+        /**
+         * Get available languages to add to the select
+         * @returns The available languages with names
+         */
         static getAvailableLanguagesWithNames() {
-            const languages = LanguageService.getAvailableLanguages();
+            const languages = Language;
             return languages;
         }
         /**
@@ -1435,32 +1520,668 @@
         static setLanguage(selected) {
             Config.setLanguage(selected);
         }
-        /**
-         * Load the irpf model
-         * @param region The region to load
-         * @param year The year to load
-         * @returns True if the data is loaded, false otherwise
-         */
-        static async loadIRPFModel(region, year) {
-            return await IrpfService.load(region, year);
+    }
+
+    class TaxMenu extends UIComponent {
+        constructor() {
+            super({
+                type: HTML.DIV,
+                id: TaxMenu.MENU_ID,
+                classes: [Gtdf.BOX_COLUMN, Gtdf.BOX_X_START, Gtdf.BOX_X_CENTER],
+                attributes: {
+                    draggable: "true",
+                },
+            });
+            this.setEvents({
+                click: () => {
+                    this.toggleMobileMenu();
+                }
+            });
+            this.innerSpace = new UIComponent({
+                type: HTML.DIV,
+                id: TaxMenu.INNER_MENU_ID,
+                classes: [Gtdf.BOX_COLUMN],
+            });
+            this.innerSpace.appendTo(this);
+            this.show();
         }
         /**
-         * Set the payment number
-         * @param paymentNumber  The payment number
+         * Show the menu
          */
-        static setPaymentNumber(paymentNumber) {
-            IrpfService.setPaymentNumber(paymentNumber);
+        show() {
+            this.innerSpace.clean();
+            this.drawRegionOptions();
+            this.drawYearOptions();
+            this.drawLanguageOptions();
+        }
+        /**
+         * Update the view with the new data
+         */
+        update() { }
+        /**
+         * Draw region options on the menu
+         */
+        drawRegionOptions() {
+            const regionTitle = new UIComponent({
+                type: HTML.H3,
+                text: `${Text.home.regions}`,
+                classes: [TaxMenu.OPTIONS_TITLE_CLASS],
+            });
+            regionTitle.appendTo(this.innerSpace);
+            const container = new UIComponent({
+                type: HTML.DIV,
+                classes: [
+                    Gtdf.BOX_ROW,
+                    Gtdf.BOX_CENTER,
+                    TaxMenu.BUTTON_CONTAINER_CLASS,
+                ],
+            });
+            HomeCore$1.AVAILABLE_REGIONS.forEach((region) => {
+                const regionName = Text.regions[region];
+                const selected = region == HomeCore$1.instance().region;
+                const regionButtonClasses = [
+                    Gtdf.BOX_ROW,
+                    Gtdf.BOX_CENTER,
+                    TaxMenu.MENU_OPTION_CLASS,
+                    TaxMenu.REGION_OPTION_CLASS,
+                ];
+                if (selected) {
+                    regionButtonClasses.push(TaxMenu.SELECTED_CLASS);
+                }
+                const regionButton = new UIComponent({
+                    type: HTML.BUTTON,
+                    text: regionName,
+                    classes: regionButtonClasses,
+                    events: {
+                        click: async (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            HomeCore$1.instance().region = region;
+                            const options = this.element.querySelectorAll(`.${TaxMenu.MENU_OPTION_CLASS}.${TaxMenu.REGION_OPTION_CLASS}`);
+                            options.forEach(option => {
+                                option.classList.remove(TaxMenu.SELECTED_CLASS);
+                            });
+                            regionButton.element.classList.add(TaxMenu.SELECTED_CLASS);
+                            await HomeCore$1.taxModelChangedSignal.emit({
+                                region: HomeCore$1.instance().region,
+                                year: HomeCore$1.instance().year,
+                            });
+                        },
+                    },
+                });
+                regionButton.appendTo(container);
+            });
+            container.appendTo(this.innerSpace);
+        }
+        /**
+         * Draw year options on the menu
+         */
+        drawYearOptions() {
+            const yearsTitle = new UIComponent({
+                type: HTML.H3,
+                text: `${Text.home.years}`,
+                classes: [TaxMenu.OPTIONS_TITLE_CLASS],
+            });
+            yearsTitle.appendTo(this.innerSpace);
+            const container = new UIComponent({
+                type: HTML.DIV,
+                classes: [
+                    TaxMenu.BUTTON_CONTAINER_CLASS,
+                    Gtdf.BOX_ROW,
+                    Gtdf.BOX_CENTER,
+                ],
+            });
+            HomeCore$1.AVAILABLE_YEARS.forEach((year) => {
+                const yearButtonClasses = [
+                    Gtdf.BOX_ROW,
+                    Gtdf.BOX_CENTER,
+                    TaxMenu.MENU_OPTION_CLASS,
+                    TaxMenu.LANG_OPTION_CLASS,
+                ];
+                const selected = year == HomeCore$1.instance().year;
+                if (selected)
+                    yearButtonClasses.push(TaxMenu.SELECTED_CLASS);
+                const yearButton = new UIComponent({
+                    type: HTML.BUTTON,
+                    text: year,
+                    classes: yearButtonClasses,
+                    events: {
+                        click: async (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            HomeCore$1.instance().year = year;
+                            const options = this.element.querySelectorAll(`.${TaxMenu.MENU_OPTION_CLASS}.${TaxMenu.LANG_OPTION_CLASS}`);
+                            options.forEach(option => option.classList.remove(TaxMenu.SELECTED_CLASS));
+                            yearButton.element.classList.add(TaxMenu.SELECTED_CLASS);
+                            await HomeCore$1.taxModelChangedSignal.emit({
+                                region: HomeCore$1.instance().region,
+                                year: HomeCore$1.instance().year,
+                            });
+                        },
+                    },
+                });
+                yearButton.appendTo(container);
+            });
+            container.appendTo(this.innerSpace);
+        }
+        /**
+         * Draw language options on the menu
+         */
+        drawLanguageOptions() {
+            const languagesTitle = new UIComponent({
+                type: HTML.H3,
+                text: `${Text.home.languages}`,
+                classes: [TaxMenu.OPTIONS_TITLE_CLASS],
+            });
+            languagesTitle.appendTo(this.innerSpace);
+            const container = new UIComponent({
+                type: HTML.DIV,
+                classes: [
+                    TaxMenu.BUTTON_CONTAINER_CLASS,
+                    Gtdf.BOX_ROW,
+                    Gtdf.BOX_CENTER,
+                ],
+            });
+            const languages = LanguageService.getAvailableLanguagesWithNames();
+            for (const lang in languages) {
+                const languageButtonClasses = [
+                    Gtdf.BOX_ROW,
+                    Gtdf.BOX_CENTER,
+                    TaxMenu.MENU_OPTION_CLASS,
+                    TaxMenu.YEAR_OPTION_CLASS,
+                ];
+                const selected = languages[lang] == Config.getLanguage();
+                if (selected)
+                    languageButtonClasses.push(TaxMenu.SELECTED_CLASS);
+                const languageButton = new UIComponent({
+                    type: HTML.BUTTON,
+                    text: Text.languages[lang.toLocaleLowerCase()],
+                    classes: languageButtonClasses,
+                    events: {
+                        click: async (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            LanguageService.setLanguage(languages[lang]);
+                            await TextBundle.reloadSignal.emit();
+                            SignalBuffer.search("changeView").emit("home");
+                        },
+                    },
+                });
+                languageButton.appendTo(container);
+            }
+            container.appendTo(this.innerSpace);
+        }
+        /**
+         * Toggle the mobile menu
+         */
+        toggleMobileMenu() {
+            this.element.classList.toggle("show");
         }
     }
-    HomeCore.AVAILABLE_REGIONS = {
-        "paisvasco": "País Vasco",
-        //"catalunya": "Catalunya",
+    TaxMenu.MENU_ID = "calc-menu";
+    TaxMenu.INNER_MENU_ID = "menu";
+    TaxMenu.OPTIONS_TITLE_CLASS = "options-title";
+    TaxMenu.BUTTON_CONTAINER_CLASS = "button-container";
+    TaxMenu.MENU_OPTION_CLASS = "menu-option";
+    TaxMenu.REGION_OPTION_CLASS = "region-option";
+    TaxMenu.YEAR_OPTION_CLASS = "year-option";
+    TaxMenu.LANG_OPTION_CLASS = "lang-option";
+    TaxMenu.SELECTED_CLASS = "selected";
+
+    class ValueTag extends UIComponent {
+        constructor(label, value) {
+            super({
+                type: HTML.SPAN,
+                classes: [Gtdf.BOX_ROW, Gtdf.BOX_Y_CENTER, Gtdf.BOX_X_BETWEEN, ValueTag.TAG_CLASS],
+            });
+            this.value = value;
+            this.label = label;
+            this.labelComponent = new UIComponent({
+                type: HTML.LABEL,
+                text: this.label,
+                classes: [ValueTag.TAG_LABEL_CLASS],
+                styles: {
+                    fontSize: "1.1rem",
+                }
+            });
+            this.valueComponent = new UIComponent({
+                type: HTML.SPAN,
+                text: `${this.value}`,
+                classes: [ValueTag.TAG_VALUE_CLASS],
+            });
+            this.labelComponent.appendTo(this);
+            this.valueComponent.appendTo(this);
+        }
+        update(value, label) {
+            this.value = value;
+            this.label = label;
+            this.valueComponent.element.textContent = `${this.value}`;
+            this.labelComponent.element.textContent = `${this.label}`;
+        }
+    }
+    ValueTag.TAG_CLASS = "value-data";
+    ValueTag.TAG_VALUE_CLASS = "value";
+    ValueTag.TAG_LABEL_CLASS = "label";
+
+    class CalculationPanel extends UIComponent {
+        constructor() {
+            super({
+                type: HTML.DIV,
+                classes: [Gtdf.BOX_COLUMN, Gtdf.BOX_CENTER],
+                id: CalculationPanel.CALC_FRAME_ID,
+            });
+            this.show();
+            HomeCore$1.updateTaxesUISignal.subscribe({
+                update: async (data) => {
+                    await this.update(data);
+                }
+            });
+            HomeCore$1.taxesCannotBeLoadedSignal.subscribe({
+                update: async (data) => {
+                    await this.updateError(data);
+                }
+            });
+        }
+        show() {
+            this.clean();
+            const mainFrame = new UIComponent({
+                type: HTML.DIV,
+                id: CalculationPanel.MAIN_FRAME_ID,
+            });
+            const title = new UIComponent({
+                type: HTML.H1,
+                text: Text.home.netSalary,
+                id: CalculationPanel.MAIN_TITLE_ID,
+            });
+            const salaryInputPanel = new UIComponent({
+                type: HTML.DIV,
+                id: CalculationPanel.SALARY_INPUT_PANEL_ID,
+                classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER],
+            });
+            const salaryInput = new UIComponent({
+                type: HTML.INPUT,
+                id: CalculationPanel.SALARY_INPUT_ID,
+                attributes: {
+                    type: "number",
+                    inputmode: "numeric",
+                    name: "salary",
+                    value: HomeCore$1.instance().grossSalary > 0 ? HomeCore$1.instance().grossSalary + "" : "",
+                    min: "0"
+                },
+            });
+            salaryInput.appendTo(salaryInputPanel);
+            const paymentNumberInput = new UIComponent({
+                type: HTML.BUTTON,
+                text: `${HomeCore$1.AVAILABLE_PAYMENT_NUMBERS[0]}`,
+                id: CalculationPanel.PAYMENT_NUMBER_INPUT_ID,
+                classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER],
+            });
+            paymentNumberInput.appendTo(salaryInputPanel);
+            paymentNumberInput.setEvents({
+                click: async () => {
+                    let paymentNumber = +paymentNumberInput.element.innerHTML;
+                    const index = HomeCore$1.AVAILABLE_PAYMENT_NUMBERS.indexOf(paymentNumber);
+                    const newIndex = index + 1 >= HomeCore$1.AVAILABLE_PAYMENT_NUMBERS.length ? 0 : index + 1;
+                    paymentNumberInput.element.innerHTML = `${HomeCore$1.AVAILABLE_PAYMENT_NUMBERS[newIndex]}`;
+                    HomeCore$1.instance().grossSalary = +salaryInput.getValue();
+                    await HomeCore$1.paymentNumberChangedSignal.emit(HomeCore$1.AVAILABLE_PAYMENT_NUMBERS[newIndex]);
+                }
+            });
+            this.result = new UIComponent({
+                type: HTML.DIV,
+                id: CalculationPanel.RESULT_ID,
+            });
+            const footer = new UIComponent({
+                type: HTML.FOOTER,
+                id: CalculationPanel.FOOTER_ID,
+                text: `Akrck02 / Rayxnor - ${new Date().getFullYear()}`,
+            });
+            salaryInput.setEvents({
+                input: () => {
+                    HomeCore$1.salaryChangedSignal.emit(+salaryInput.getValue());
+                }
+            });
+            title.appendTo(mainFrame);
+            salaryInputPanel.appendTo(mainFrame);
+            this.result.appendTo(mainFrame);
+            mainFrame.appendTo(this);
+            footer.appendTo(this);
+        }
+        async update(data) {
+            this.result.clean();
+            if (HomeCore$1.instance().grossSalary > HomeCore$1.MAX_SALARY) {
+                const warning = new UIComponent({
+                    type: HTML.B,
+                    classes: ["text-error", Gtdf.TEXT_CENTER, Gtdf.BOX_ROW, Gtdf.BOX_CENTER],
+                    text: Text.errors.salaryTooHigh,
+                });
+                warning.appendTo(this.result);
+                return;
+            }
+            const salaryResult = new ValueTag(Text.home.salary, `${data.salary}€`);
+            salaryResult.appendTo(this.result);
+            if (HomeCore$1.instance().isDefaultPaymentNumber()) {
+                const extraPaymentResult = new ValueTag(Text.home.extra, `${data.extraPayment}€`);
+                extraPaymentResult.appendTo(this.result);
+            }
+            const irpfPercentageResult = new ValueTag(Text.home.incomeTax, `${data.irpfPercentage}%`);
+            irpfPercentageResult.appendTo(this.result);
+        }
+        async updateError(data) {
+            this.result.clean();
+            const warning = new UIComponent({
+                type: HTML.B,
+                classes: ["text-error"],
+                text: Text.errors.cannotLoadTax,
+            });
+            warning.appendTo(this.result);
+        }
+    }
+    CalculationPanel.CALC_FRAME_ID = "calc-frame";
+    CalculationPanel.MAIN_FRAME_ID = "main-frame";
+    CalculationPanel.MAIN_TITLE_ID = "main-title";
+    CalculationPanel.SALARY_INPUT_PANEL_ID = "salary-input-panel";
+    CalculationPanel.SALARY_INPUT_ID = "salary";
+    CalculationPanel.PAYMENT_NUMBER_INPUT_ID = "payment-number";
+    CalculationPanel.RESULT_ID = "result";
+    CalculationPanel.FOOTER_ID = "footer";
+
+    var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
-    HomeCore.AVAILABLE_YEARS = [
-        "2024",
-        "2023",
-        "2022",
-    ];
+    var __metadata$4 = (undefined && undefined.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var HomeView_1;
+    let HomeView = HomeView_1 = class HomeView extends ViewUI {
+        constructor() {
+            super({
+                type: HTML.VIEW,
+                id: HomeView_1.ID,
+                classes: [Gtdf.BOX_ROW, Gtdf.BOX_X_START, Gtdf.BOX_Y_CENTER],
+            });
+        }
+        async show(params, container) {
+            Config.setTitle(`${Config.Base.app_name} - ${HomeCore$1.instance().grossSalary > 0 ? HomeCore$1.instance().grossSalary + "€" : Text.home.title}`);
+            if (Browser.isSmallDevice()) {
+                this.element.classList.add(HomeView_1.MOBILE_CLASS);
+            }
+            const menu = new TaxMenu();
+            menu.appendTo(this);
+            const calculationPanel = new CalculationPanel();
+            calculationPanel.appendTo(this);
+            this.appendTo(container);
+            await HomeCore$1.taxModelChangedSignal.emit({
+                region: params[0] || HomeCore$1.DEFAULT_REGION,
+                year: params[1] || HomeCore$1.instance().year
+            });
+            const salary = params[2] || HomeCore$1.instance().grossSalary;
+            if (salary > 0) {
+                await HomeCore$1.salaryChangedSignal.emit(salary);
+            }
+        }
+    };
+    HomeView.ID = "home";
+    HomeView.MOBILE_CLASS = "mobile";
+    HomeView = HomeView_1 = __decorate$4([
+        Route(["", "calculate", undefined]),
+        Singleton(),
+        __metadata$4("design:paramtypes", [])
+    ], HomeView);
+    var HomeView$1 = HomeView;
+
+    class ObservableUIComponent extends UIComponent {
+        constructor(properties) {
+            super(properties);
+            this.observable = properties.observable;
+            this.observable.subscribe(this);
+        }
+        async update() {
+            console.warn("ObservableUIComponent.update() not implemented.");
+        }
+    }
+
+    class Observable {
+        constructor() {
+            this.observers = [];
+            let a = this;
+            this.content = {};
+            this.content = new Proxy(this.content, {
+                set: function (target, key, value) {
+                    target[key] = value;
+                    a.notify();
+                    return true;
+                }
+            });
+        }
+        /**
+         * Subscribe an observer to the observable
+         * @param observer The observer to subscribe
+         */
+        subscribe(observer) {
+            this.observers.push(observer);
+        }
+        /**
+         * Unsubscribe an observer from the observable
+         * @param observer The observer to unsubscribe
+         */
+        unsubscribe(observer) {
+            this.observers = this.observers.filter((obs) => obs !== observer);
+        }
+        async notify() {
+            for (let observer of this.observers) {
+                try {
+                    await observer.update();
+                }
+                catch (e) {
+                    console.error("Error notifying observer", e);
+                }
+            }
+        }
+    }
+
+    var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata$3 = (undefined && undefined.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    let TestView = class TestView extends ViewUI {
+        constructor() {
+            super({
+                type: HTML.VIEW,
+                classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER],
+                styles: {
+                    width: "100%",
+                    height: "100vh"
+                }
+            });
+        }
+        async show(params, container) {
+            const observable = new Observable();
+            const input = new ObservableUIComponent({
+                type: "div",
+                text: "Change observable",
+                classes: [Gtdf.BOX_CENTER, Gtdf.TEXT_CENTER],
+                styles: {
+                    background: "blue",
+                    width: "15rem",
+                    height: "6rem",
+                    borderRadius: ".35rem",
+                    color: "#1A1A1A",
+                    fontSize: "1.35rem",
+                    transition: ".35s"
+                }, observable: observable
+            });
+            input.setEvents({
+                click: () => {
+                    observable.content.paymentNumber = Math.random() > .5 ? 12 : 14;
+                }
+            });
+            input.update = async () => {
+                const rgb = () => Math.round(Math.random() * 255);
+                input.setStyles({
+                    background: `rgb(${rgb()},${rgb()},${rgb()})`
+                });
+                console.log(observable.content);
+            };
+            input.appendTo(this);
+            this.appendTo(container);
+        }
+    };
+    TestView = __decorate$3([
+        Route(["test"]),
+        Singleton(),
+        __metadata$3("design:paramtypes", [])
+    ], TestView);
+    var TestView$1 = TestView;
+
+    var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata$2 = (undefined && undefined.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var Router_1;
+    let Router = Router_1 = class Router {
+        constructor() {
+            this.Endpoints = [HomeView$1, ErrorView$1, TestView$1];
+            {
+                this.parent = document.getElementById("view-container");
+                //If no parent is present on the HTML file throws an error
+                if (!this.parent) {
+                    throw new InitializeError("view-container does not exist");
+                }
+                this.container = new UIComponent({
+                    type: "div",
+                    id: "view-container-box",
+                    styles: {
+                        width: "100%",
+                        height: "100%",
+                    },
+                });
+                this.container.appendTo(this.parent);
+                this.changeViewSignal = new Signal("changeView");
+                SignalBuffer.add(this.changeViewSignal);
+                this.changeViewSignal.subscribe(this);
+                this.viewChangedSignal = new Signal(Router_1.VIEW_CHANGED_SIGNAL);
+                SignalBuffer.add(this.viewChangedSignal);
+            }
+        }
+        async update(data) {
+            console.debug(data);
+            console.debug(`Router update to /${data.view}`);
+            let params = [];
+            if (data.params) {
+                params.push(data.view);
+                params = params.concat(data.params);
+            }
+            await this.load(params);
+        }
+        /**
+         * Load the app state with the given params
+         * @param params The list of params
+         */
+        async load(params) {
+            try {
+                this.clear();
+                this.container.clean();
+                let found = false;
+                Routes.forEach((route) => {
+                    if (route.isPointing(params[0])) {
+                        route.clean();
+                        route.show(params.splice(1), this.container);
+                        this.viewChangedSignal.emit({
+                            view: route.routes[0],
+                            params: params.splice(1),
+                        });
+                        found = true;
+                    }
+                });
+                if (!found) {
+                    ErrorView$1.instance().show(["404"], this.container);
+                    this.viewChangedSignal.emit({
+                        view: ErrorView$1.instance().routes[0],
+                        params: ["404"],
+                    });
+                }
+            }
+            catch (error) {
+                console.error(error);
+            }
+        }
+        /**
+         * Clear the container
+         */
+        clear() {
+            this.container.element.innerHTML = "";
+        }
+    };
+    Router.CHAGE_VIEW_SIGNAL = "changeView";
+    Router.VIEW_CHANGED_SIGNAL = "viewChanged";
+    Router = Router_1 = __decorate$2([
+        Singleton(),
+        StaticImplements(),
+        __metadata$2("design:paramtypes", [])
+    ], Router);
+    var Router$1 = Router;
+
+    /**
+     * Abstract class representing those classes
+     * that listen to events to handle them in a
+     * specific way.
+     *
+     * The ping() method has testing purposes and
+     * can be deleted.
+     */
+    class Listener {
+        ping() {
+            alert({
+                title: "Connected",
+                icon: "notifications",
+                message: "Pong!",
+                desktop: true,
+            });
+        }
+        ;
+    }
+
+    /**
+     * Example listener to show how to create Listener
+     * extended classes
+     */
+    class ExampleListener extends Listener {
+        constructor() {
+            super();
+        }
+    }
+
+    /**
+     * Event listeners for the application
+     */
+    const Events = {
+        example: new ExampleListener()
+    };
+
+    class Keyboard {
+        static setEventListeners(listeners) {
+            document.addEventListener('keyup', function (event) {
+                // CTRL + period
+                if (event.ctrlKey && event.code === 'Period') {
+                    listeners.example.ping();
+                }
+            });
+        }
+    }
 
     /**
      * Material icon loader observer
@@ -1546,507 +2267,6 @@
         return svg;
     }
 
-    var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-        return c > 3 && r && Object.defineProperty(target, key, r), r;
-    };
-    var __metadata$2 = (undefined && undefined.__metadata) || function (k, v) {
-        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-    };
-    var HomeView_1;
-    let HomeView = HomeView_1 = class HomeView extends ViewUI {
-        constructor() {
-            super({
-                type: HTML.VIEW,
-                id: HomeView_1.ID,
-                classes: [Gtdf.BOX_ROW, Gtdf.BOX_X_START, Gtdf.BOX_Y_CENTER],
-            });
-        }
-        async show(params, container) {
-            HomeCore.region = params[0] || HomeView_1.DEFAULT_REGION;
-            HomeCore.year = params[1] || `${new Date().getFullYear()}`;
-            HomeCore.grossSalary = +params[2] || HomeView_1.MIN_SALARY;
-            Config.setTitle(`${Config.Base.app_name} - ${HomeCore.grossSalary > 0 ? HomeCore.grossSalary + "€" : Text.home.title}`);
-            if (Browser.isSmallDevice()) {
-                this.element.classList.add(HomeView_1.MOBILE_CLASS);
-            }
-            const calcView = new UIComponent({
-                type: HTML.DIV,
-                classes: [Gtdf.BOX_COLUMN, Gtdf.BOX_CENTER],
-                id: HomeView_1.CALC_FRAME_ID,
-            });
-            const calcMenu = new UIComponent({
-                type: HTML.DIV,
-                id: HomeView_1.CALC_MENU_ID,
-                classes: [Gtdf.BOX_COLUMN, Gtdf.BOX_X_START, Gtdf.BOX_X_CENTER],
-            });
-            await this.showMenu(calcMenu);
-            await this.showCalcView(calcView);
-            calcMenu.appendTo(this);
-            calcView.appendTo(this);
-            this.appendTo(container);
-            this.setClasses(["showing"]);
-        }
-        /**
-         * Show region and year selection menu
-         * @param parent The parent component
-         */
-        async showMenu(parent) {
-            const menu = new UIComponent({
-                type: HTML.DIV,
-                id: HomeView_1.MENU_ID,
-                classes: [Gtdf.BOX_COLUMN],
-            });
-            const regionTitle = new UIComponent({
-                type: HTML.H3,
-                text: `${Text.home.regions}`,
-                classes: [HomeView_1.OPTIONS_TITLE_CLASS],
-            });
-            regionTitle.appendTo(menu);
-            const regionsButtonContainer = new UIComponent({
-                type: HTML.DIV,
-                classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER, HomeView_1.BUTTON_CONTAINER_CLASS],
-            });
-            for (const region in HomeCore.AVAILABLE_REGIONS) {
-                const regionName = HomeCore.AVAILABLE_REGIONS[region];
-                const selected = region == HomeCore.region;
-                const regionButtonClasses = [Gtdf.BOX_ROW, Gtdf.BOX_CENTER, HomeView_1.MENU_OPTION_CLASS, HomeView_1.REGION_OPTION_CLASS];
-                if (selected) {
-                    regionButtonClasses.push(HomeView_1.SELECTED_CLASS);
-                }
-                const regionButton = new UIComponent({
-                    type: HTML.BUTTON,
-                    text: regionName,
-                    classes: regionButtonClasses,
-                    events: {
-                        click: async () => {
-                            HomeCore.region = region;
-                            const options = menu.element.querySelectorAll(`.${HomeView_1.MENU_OPTION_CLASS}.${HomeView_1.REGION_OPTION_CLASS}`);
-                            options.forEach(option => {
-                                option.classList.remove(HomeView_1.SELECTED_CLASS);
-                            });
-                            regionButton.element.classList.add(HomeView_1.SELECTED_CLASS);
-                            await this.loadIRPFModel(HomeCore.region, HomeCore.year);
-                            this.showCalcResults(document.getElementById(HomeView_1.SALARY_INPUT_ID).valueAsNumber);
-                            this.toggleMobileMenu();
-                        }
-                    }
-                });
-                regionButton.appendTo(regionsButtonContainer);
-            }
-            regionsButtonContainer.appendTo(menu);
-            const yearsTitle = new UIComponent({
-                type: HTML.H3,
-                text: `${Text.home.years}`,
-                classes: [HomeView_1.OPTIONS_TITLE_CLASS],
-            });
-            yearsTitle.appendTo(menu);
-            const yearsButtonContainer = new UIComponent({
-                type: HTML.DIV,
-                classes: [HomeView_1.BUTTON_CONTAINER_CLASS, Gtdf.BOX_ROW, Gtdf.BOX_CENTER],
-            });
-            HomeCore.AVAILABLE_YEARS.forEach(year => {
-                const yearButtonClasses = [Gtdf.BOX_ROW, Gtdf.BOX_CENTER, HomeView_1.MENU_OPTION_CLASS, HomeView_1.YEAR_OPTION_CLASS];
-                const selected = year == HomeCore.year;
-                if (selected)
-                    yearButtonClasses.push(HomeView_1.SELECTED_CLASS);
-                const yearButton = new UIComponent({
-                    type: HTML.BUTTON,
-                    text: year,
-                    classes: yearButtonClasses,
-                    events: {
-                        click: async () => {
-                            HomeCore.year = year;
-                            const options = menu.element.querySelectorAll(`.${HomeView_1.MENU_OPTION_CLASS}.${HomeView_1.YEAR_OPTION_CLASS}`);
-                            options.forEach(option => {
-                                option.classList.remove(HomeView_1.SELECTED_CLASS);
-                            });
-                            yearButton.element.classList.add(HomeView_1.SELECTED_CLASS);
-                            await this.loadIRPFModel(HomeCore.region, HomeCore.year);
-                            this.showCalcResults(document.getElementById(HomeView_1.SALARY_INPUT_ID).valueAsNumber);
-                            this.toggleMobileMenu();
-                        }
-                    }
-                });
-                yearButton.appendTo(yearsButtonContainer);
-            });
-            yearsButtonContainer.appendTo(menu);
-            const languagesTitle = new UIComponent({
-                type: HTML.H3,
-                text: `${Text.home.languages}`,
-                classes: [HomeView_1.OPTIONS_TITLE_CLASS],
-            });
-            languagesTitle.appendTo(menu);
-            const languagesButtonContainer = new UIComponent({
-                type: HTML.DIV,
-                classes: [HomeView_1.BUTTON_CONTAINER_CLASS, Gtdf.BOX_ROW, Gtdf.BOX_CENTER],
-            });
-            const languages = HomeCore.getAvailableLanguagesWithNames();
-            for (const lang in languages) {
-                const languageButtonClasses = [Gtdf.BOX_ROW, Gtdf.BOX_CENTER, HomeView_1.MENU_OPTION_CLASS];
-                const selected = languages[lang] == Config.getLanguage();
-                if (selected)
-                    languageButtonClasses.push(HomeView_1.SELECTED_CLASS);
-                const languageButton = new UIComponent({
-                    type: HTML.BUTTON,
-                    text: Text.languages[lang.toLocaleLowerCase()],
-                    classes: languageButtonClasses,
-                    events: {
-                        click: async () => {
-                            HomeCore.setLanguage(languages[lang]);
-                            await TextBundle.reloadSignal.emit();
-                            SignalBuffer.search("changeView").emit("home");
-                        }
-                    }
-                });
-                languageButton.appendTo(languagesButtonContainer);
-            }
-            languagesButtonContainer.appendTo(menu);
-            menu.appendTo(parent);
-        }
-        async showCalcView(parent) {
-            const mainFrame = new UIComponent({
-                type: HTML.DIV,
-                id: HomeView_1.MAIN_FRAME_ID,
-            });
-            const title = new UIComponent({
-                type: HTML.H1,
-                text: Text.home.netSalary,
-                id: "main-title",
-            });
-            const salaryInputPanel = new UIComponent({
-                type: HTML.DIV,
-                id: HomeView_1.SALARY_INPUT_PANEL_ID,
-                classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER],
-            });
-            const salaryInput = new UIComponent({
-                type: HTML.INPUT,
-                id: HomeView_1.SALARY_INPUT_ID,
-                attributes: {
-                    type: "number",
-                    inputmode: "numeric",
-                    name: "salary",
-                    value: HomeCore.grossSalary > 0 ? HomeCore.grossSalary + "" : "",
-                    min: "0"
-                },
-            });
-            salaryInput.appendTo(salaryInputPanel);
-            const paymentNumberInput = new UIComponent({
-                type: HTML.BUTTON,
-                text: `${HomeView_1.AVAILABLE_PAYMENT_NUMBERS[0]}`,
-                id: HomeView_1.PAYMENT_NUMBER_INPUT_ID,
-                classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER],
-            });
-            paymentNumberInput.setEvents({
-                click: () => {
-                    let paymentNumber = +paymentNumberInput.element.innerHTML;
-                    const index = HomeView_1.AVAILABLE_PAYMENT_NUMBERS.indexOf(paymentNumber);
-                    const newIndex = index + 1 >= HomeView_1.AVAILABLE_PAYMENT_NUMBERS.length ? 0 : index + 1;
-                    paymentNumberInput.element.innerHTML = `${HomeView_1.AVAILABLE_PAYMENT_NUMBERS[newIndex]}`;
-                    HomeCore.setPaymentNumber(HomeView_1.AVAILABLE_PAYMENT_NUMBERS[newIndex]);
-                    this.showCalcResults(+salaryInput.getValue());
-                }
-            });
-            paymentNumberInput.appendTo(salaryInputPanel);
-            this.result = new UIComponent({
-                type: HTML.DIV,
-                id: "result",
-            });
-            const footer = new UIComponent({
-                type: HTML.FOOTER,
-                id: "footer",
-                text: `Akrck02 / Rayxnor - ${new Date().getFullYear()}`,
-            });
-            const darkTheme = Config.isDarkTheme();
-            const themeToggle = new UIComponent({
-                type: HTML.DIV,
-                text: MaterialIcons.get(darkTheme ? "light_mode" : "dark_mode", {
-                    size: "24",
-                    fill: darkTheme ? "#ccc" : "#222",
-                }).toHTML(),
-                classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER, HomeView_1.THEME_CLASS],
-            });
-            themeToggle.setEvents({
-                click: () => {
-                    const theme = Config.toggleTheme();
-                    themeToggle.element.innerHTML = MaterialIcons.get(`${theme}_mode`, { size: "24", fill: Config.isDarkTheme() ? "#fff" : "#222", }).toHTML();
-                }
-            });
-            const settingsButton = new UIComponent({
-                type: HTML.DIV,
-                text: MaterialIcons.get("tune", {
-                    size: "24",
-                    fill: darkTheme ? "#ccc" : "#222",
-                }).toHTML(),
-                classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER, "settings"],
-            });
-            settingsButton.appendTo(mainFrame);
-            const view = this;
-            settingsButton.setEvents({
-                click: () => {
-                    view.toggleMobileMenu();
-                }
-            });
-            salaryInput.setEvents({
-                input: () => {
-                    this.showCalcResults(+salaryInput.getValue());
-                }
-            });
-            await this.loadIRPFModel(HomeCore.region, HomeCore.year);
-            if (HomeCore.grossSalary > 0) {
-                await this.showCalcResults(HomeCore.grossSalary);
-            }
-            title.appendTo(mainFrame);
-            salaryInputPanel.appendTo(mainFrame);
-            this.result.appendTo(mainFrame);
-            themeToggle.appendTo(mainFrame);
-            mainFrame.appendTo(parent);
-            footer.appendTo(parent);
-        }
-        async loadIRPFModel(region, year) {
-            if (!await HomeCore.loadIRPFModel(HomeCore.region, HomeCore.year)) {
-                HomeCore.cleanIrpfModel();
-                this.result.clean();
-                const warning = new UIComponent({
-                    type: HTML.B,
-                    classes: ["text-error"],
-                    text: Text.errors.cannotLoadTax,
-                });
-                warning.appendTo(this.result);
-                if (!Browser.isSmallDevice()) {
-                    alert({ icon: "block", message: Text.errors.cannotLoadTax });
-                }
-                return;
-            }
-            this.result.clean();
-        }
-        /**
-         * Show calculation results
-         * @param parent  Parent element
-         * @param grossSalary Gross salary
-         */
-        showCalcResults(grossSalary) {
-            if (isNaN(grossSalary)) {
-                return;
-            }
-            this.result.clean();
-            if (grossSalary > HomeView_1.MAX_SALARY) {
-                const warning = new UIComponent({
-                    type: HTML.B,
-                    classes: ["text-error", Gtdf.TEXT_CENTER, Gtdf.BOX_ROW, Gtdf.BOX_CENTER],
-                    text: Text.errors.salaryTooHigh,
-                });
-                warning.appendTo(this.result);
-                return;
-            }
-            const salary = HomeCore.getSalary(grossSalary);
-            const extraPayment = HomeCore.getExtraPayment(grossSalary);
-            const irpfPercentage = HomeCore.getIRPFPercentage(grossSalary);
-            const salaryResult = this.createValueDataComponent(Text.home.salary, `${salary}€`);
-            salaryResult.appendTo(this.result);
-            const extraPaymentResult = this.createValueDataComponent(Text.home.extra, `${extraPayment}€`);
-            extraPaymentResult.appendTo(this.result);
-            const irpfPercentageResult = this.createValueDataComponent(Text.home.incomeTax, `${irpfPercentage}%`);
-            irpfPercentageResult.appendTo(this.result);
-        }
-        createValueDataComponent(label, value) {
-            const resultComponent = new UIComponent({
-                type: HTML.SPAN,
-                classes: [Gtdf.BOX_ROW, Gtdf.BOX_Y_CENTER, Gtdf.BOX_X_BETWEEN],
-                id: "value-data",
-            });
-            const labelComponent = new UIComponent({
-                type: HTML.LABEL,
-                text: label,
-                classes: ["label"],
-                styles: {
-                    fontSize: "1.1rem",
-                }
-            });
-            const valueComponent = new UIComponent({
-                type: HTML.SPAN,
-                text: `${value}`,
-                classes: ["value"],
-            });
-            labelComponent.appendTo(resultComponent);
-            valueComponent.appendTo(resultComponent);
-            return resultComponent;
-        }
-        toggleMobileMenu() {
-            const menu = document.getElementById("calc-menu");
-            menu.classList.toggle("show");
-        }
-    };
-    HomeView.MAX_SALARY = 1000000;
-    HomeView.MIN_SALARY = 0;
-    HomeView.DEFAULT_REGION = "paisvasco";
-    HomeView.AVAILABLE_PAYMENT_NUMBERS = [14, 12];
-    HomeView.ID = "home";
-    HomeView.CALC_FRAME_ID = "calc-frame";
-    HomeView.CALC_MENU_ID = "calc-menu";
-    HomeView.MENU_ID = "menu";
-    HomeView.MAIN_FRAME_ID = "main-frame";
-    HomeView.SALARY_INPUT_PANEL_ID = "salary-input-panel";
-    HomeView.SALARY_INPUT_ID = "salary";
-    HomeView.PAYMENT_NUMBER_INPUT_ID = "payment-number";
-    HomeView.MOBILE_CLASS = "mobile";
-    HomeView.OPTIONS_TITLE_CLASS = "options-title";
-    HomeView.BUTTON_CONTAINER_CLASS = "button-container";
-    HomeView.MENU_OPTION_CLASS = "menu-option";
-    HomeView.REGION_OPTION_CLASS = "region-option";
-    HomeView.YEAR_OPTION_CLASS = "year-option";
-    HomeView.SELECTED_CLASS = "selected";
-    HomeView.THEME_CLASS = "theme";
-    HomeView = HomeView_1 = __decorate$2([
-        Route(["", "calculate", undefined]),
-        Singleton(),
-        __metadata$2("design:paramtypes", [])
-    ], HomeView);
-    var HomeView$1 = HomeView;
-
-    var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-        return c > 3 && r && Object.defineProperty(target, key, r), r;
-    };
-    var __metadata$1 = (undefined && undefined.__metadata) || function (k, v) {
-        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-    };
-    var Router_1;
-    let Router = Router_1 = class Router {
-        constructor() {
-            this.Endpoints = [HomeView$1, ErrorView$1];
-            {
-                this.parent = document.getElementById("view-container");
-                //If no parent is present on the HTML file throws an error
-                if (!this.parent) {
-                    throw new InitializeError("view-container does not exist");
-                }
-                this.container = new UIComponent({
-                    type: "div",
-                    id: "view-container-box",
-                    styles: {
-                        width: "100%",
-                        height: "100%",
-                    },
-                });
-                this.container.appendTo(this.parent);
-                this.changeViewSignal = new Signal("changeView");
-                SignalBuffer.add(this.changeViewSignal);
-                this.changeViewSignal.subscribe(this);
-                this.viewChangedSignal = new Signal(Router_1.VIEW_CHANGED_SIGNAL);
-                SignalBuffer.add(this.viewChangedSignal);
-            }
-        }
-        async update(data) {
-            console.debug(data);
-            console.debug(`Router update to /${data.view}`);
-            let params = [];
-            if (data.params) {
-                params.push(data.view);
-                params = params.concat(data.params);
-            }
-            await this.load(params);
-        }
-        /**
-         * Load the app state with the given params
-         * @param params The list of params
-         */
-        async load(params) {
-            try {
-                this.clear();
-                this.container.clean();
-                let found = false;
-                Routes.forEach((route) => {
-                    if (route.isPointing(params[0])) {
-                        route.clean();
-                        route.show(params.splice(1), this.container);
-                        this.viewChangedSignal.emit({
-                            view: route.routes[0],
-                            params: params.splice(1),
-                        });
-                        found = true;
-                    }
-                });
-                if (!found) {
-                    ErrorView$1.instance().show(["404"], this.container);
-                    this.viewChangedSignal.emit({
-                        view: ErrorView$1.instance().routes[0],
-                        params: ["404"],
-                    });
-                }
-            }
-            catch (error) {
-                console.error(error);
-            }
-        }
-        /**
-         * Clear the container
-         */
-        clear() {
-            this.container.element.innerHTML = "";
-        }
-    };
-    Router.CHAGE_VIEW_SIGNAL = "changeView";
-    Router.VIEW_CHANGED_SIGNAL = "viewChanged";
-    Router = Router_1 = __decorate$1([
-        Singleton(),
-        StaticImplements(),
-        __metadata$1("design:paramtypes", [])
-    ], Router);
-    var Router$1 = Router;
-
-    /**
-     * Abstract class representing those classes
-     * that listen to events to handle them in a
-     * specific way.
-     *
-     * The ping() method has testing purposes and
-     * can be deleted.
-     */
-    class Listener {
-        ping() {
-            alert({
-                title: "Connected",
-                icon: "notifications",
-                message: "Pong!",
-                desktop: true,
-            });
-        }
-        ;
-    }
-
-    /**
-     * Example listener to show how to create Listener
-     * extended classes
-     */
-    class ExampleListener extends Listener {
-        constructor() {
-            super();
-        }
-    }
-
-    /**
-     * Event listeners for the application
-     */
-    const Events = {
-        example: new ExampleListener()
-    };
-
-    class Keyboard {
-        static setEventListeners(listeners) {
-            document.addEventListener('keyup', function (event) {
-                // CTRL + period
-                if (event.ctrlKey && event.code === 'Period') {
-                    listeners.example.ping();
-                }
-            });
-        }
-    }
-
     class NotificationUI extends UIComponent {
         constructor() {
             super({
@@ -2109,46 +2329,53 @@
         }
     }
 
-    class Initializer {
+    var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata$1 = (undefined && undefined.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var Initializer_1;
+    let Initializer = Initializer_1 = class Initializer {
         constructor() {
-            this.initSignal = new Signal(Initializer.SIGNAL_ID);
-        }
-        /**
-         * Get an instance of Initializer
-         */
-        static get instance() {
-            if (!Initializer._instance) {
-                Initializer._instance = new Initializer();
-            }
-            return Initializer._instance;
+            this.performed = false;
+            this.subscribers = [
+                Configuration.instance,
+                MaterialIcons.instance.loader,
+                TextBundle.instance
+            ];
+            this.initSignal = new Signal(Initializer_1.SIGNAL_ID);
         }
         /**
          * Subscribe to the init signal
          * @returns The observable instance
          */
-        static async subscribeInitializables() {
-            if (Initializer.performed) {
+        async subscribeInitializables() {
+            if (this.performed) {
                 return;
             }
-            for (let subscriber of Initializer.subscribers) {
-                await Initializer.instance.initSignal.subscribe(subscriber);
+            for (let subscriber of this.subscribers) {
+                await this.initSignal.subscribe(subscriber);
             }
         }
-        static async notify() {
-            if (Initializer.performed) {
+        async notify() {
+            if (this.performed) {
                 return;
             }
-            Initializer.performed = true;
-            await Initializer.instance.initSignal.emit();
+            this.performed = true;
+            await this.initSignal.emit();
         }
-    }
+    };
     Initializer.SIGNAL_ID = "init";
-    Initializer.performed = false;
-    Initializer.subscribers = [
-        Configuration.instance,
-        MaterialIcons.instance.loader,
-        TextBundle.instance
-    ];
+    Initializer = Initializer_1 = __decorate$1([
+        Singleton(),
+        StaticImplements(),
+        __metadata$1("design:paramtypes", [])
+    ], Initializer);
+    var Initializer$1 = Initializer;
 
     var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2189,8 +2416,8 @@
          * app will redirect the user to an 404 error page.
          */
         async load() {
-            await Initializer.subscribeInitializables();
-            await Initializer.notify();
+            await Initializer$1.instance().subscribeInitializables();
+            await Initializer$1.instance().notify();
             const params = URLs.getParametersByIndex(window.location.hash.slice(1).toLowerCase(), 1);
             this.router.load(params);
         }

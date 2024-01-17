@@ -17,9 +17,10 @@ import { Singleton } from "../lib/gtdf/decorators/Singleton.js";
 import { StaticImplements } from "../lib/gtdf/core/static/static.interface.js";
 import { Routes } from "../lib/gtdf/decorators/Route.js";
 import { Signal } from "../lib/gtdf/core/signals/signal.js";
+import TestView from "./test/test.view.js";
 let Router = Router_1 = class Router {
     constructor() {
-        this.Endpoints = [HomeView, ErrorView];
+        this.Endpoints = [HomeView, ErrorView, TestView];
         {
             this.parent = document.getElementById("view-container");
             //If no parent is present on the HTML file throws an error

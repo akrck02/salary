@@ -36,7 +36,8 @@ TextBundle.AVAILABLE_BUNDLES = [
     "home",
     "errors",
     "info",
-    "languages"
+    "languages",
+    "regions"
 ];
 TextBundle.reloadSignal = new Signal("reload_text");
 export const Text = new Proxy(TextBundle.instance, {

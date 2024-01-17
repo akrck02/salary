@@ -46,8 +46,8 @@ let App = class App {
      * app will redirect the user to an 404 error page.
      */
     async load() {
-        await Initializer.subscribeInitializables();
-        await Initializer.notify();
+        await Initializer.instance().subscribeInitializables();
+        await Initializer.instance().notify();
         const params = URLs.getParametersByIndex(window.location.hash.slice(1).toLowerCase(), 1);
         this.router.load(params);
     }
