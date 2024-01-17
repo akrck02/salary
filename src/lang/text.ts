@@ -1,14 +1,14 @@
-import { Config, Configuration } from "../config/config.js";
+import { Config } from "../config/config.js";
 import { IObserver } from "../lib/gtdf/core/observable/observer.js";
 import { Signal } from "../lib/gtdf/core/signals/signal.js";
-
 export class TextBundle implements IObserver {
 
     private static readonly AVAILABLE_BUNDLES = [
         "home",
         "errors",
         "info",
-        "languages"
+        "languages",
+        "regions"
     ];
     private static _instance : TextBundle;
 
