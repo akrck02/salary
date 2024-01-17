@@ -1,5 +1,8 @@
 {
-    "CONTINGENCIAS_COMUNES" : 4.7,
-    "ATUR" : 1.55,
-    "FP" : 0.1
+    "contingenciasComunes" : 4.7,
+    "atur" : 1.55,
+    "fp" : 0.1,
+    "maxSegSocial" : 4139.40
 }
+
+

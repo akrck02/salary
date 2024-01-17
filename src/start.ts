@@ -1,4 +1,6 @@
+import Initializer from "./core/initializer.js";
 import App from "./app.js";
+
 
 /**
  * When the dynamic URL changes loads
