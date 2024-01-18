@@ -1,7 +1,7 @@
 {
     "appName" : "Salary",
     "title" : "Home",
-    "netSalary" : "Net salary",
+    "netSalary" : "Gross salary",
     "salary" : "Salary",
     "extra" : "Extra",
     "incomeTax" : "PIT",
