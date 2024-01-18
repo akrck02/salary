@@ -11,14 +11,14 @@ jobs:
       with:
         node-version: '16'
 
-    - name: instal node dependencies
+    - name: install node dependencies
       run: npm install
      
     - name: run dist build
       run: npm run dist
 
     - name: Remove innecesary files and directories
-      run: rm -rf .gitignore temp src node_modules bin environment.js package.json package-lock.json styles.config tsconfig.json
+      run: rm -rf .gitignore temp app/styles/src src node_modules bin environment.js package.json package-lock.json styles.config tsconfig.json .git .github 
       
     - name: Check the output
       run: ls -lha .
