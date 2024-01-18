@@ -9,7 +9,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
-        node-version: '16'
+        node-version: '20'
 
     - name: install node dependencies
       run: npm install
@@ -18,7 +18,7 @@ jobs:
       run: npm run dist
 
     - name: Remove innecesary files and directories
-      run: rm -rf .gitignore temp app/styles/src src node_modules bin environment.js package.json package-lock.json styles.config tsconfig.json .git .github 
+      run: rm -rf .gitignore temp app/styles/src src node_modules bin environment.js package.json package-lock.json styles.config tsconfig.json .github 
       
     - name: Check the output
       run: ls -lha .
