@@ -1,7 +1,7 @@
 name: Stable release
 on:
   push:
-    branches: [ main ]
+    branches: [ main, update/clean-ci ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -9,19 +9,19 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
-        node-version: '16'
+        node-version: '20'
 
-    - name: instal node dependencies
+    - name: install node dependencies
       run: npm install
      
     - name: run dist build
       run: npm run dist
 
-    - name: Remove gitignore
-      run: rm .gitignore
+    - name: Remove innecesary files and directories
+      run: rm -rf .gitignore temp app/styles/src src node_modules bin environment.js package.json package-lock.json styles.config tsconfig.json .github 
       
     - name: Check the output
-      run: ls -lha app/styles/ && ls -lha temp/
+      run: ls -lha .
 
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@v4.3.0
