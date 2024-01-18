@@ -1,7 +1,7 @@
 {
     "appName" : "Salary",
     "title" : "Inicio",
-    "netSalary" : "Salario neto",
+    "netSalary" : "Salario bruto",
     "salary" : "Salario",
     "extra" : "Extra",
     "incomeTax" : "IRPF",
