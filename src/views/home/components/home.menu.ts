@@ -3,6 +3,7 @@ import SignalBuffer from "../../../core/signal.buffer.js";
 import { Text, TextBundle } from "../../../lang/text.js";
 import { HTML } from "../../../lib/gtdf/components/dom.js";
 import { UIComponent } from "../../../lib/gtdf/components/uicomponent.js";
+import MaterialIcons from "../../../lib/gtdf/resources/MaterialIcons.js";
 import { Gtdf } from "../../../lib/others/gtdf.js";
 import LanguageService from "../../../services/language.service.js";
 import HomeCore from "../home.view.core.js";
@@ -40,7 +41,7 @@ export default class TaxMenu extends UIComponent {
         this.innerSpace = new UIComponent({
             type: HTML.DIV,
             id: TaxMenu.INNER_MENU_ID,
-            classes: [Gtdf.BOX_COLUMN],
+            classes: [Gtdf.BOX_COLUMN, Gtdf.BOX_Y_CENTER],
         });
 
         this.innerSpace.appendTo(this);
@@ -65,9 +66,32 @@ export default class TaxMenu extends UIComponent {
     update() {}
 
     drawThemeSelector() {
+
+        const themeButton = new UIComponent({
+            type: HTML.BUTTON,
+            styles : {
+                width: "3rem",
+                height: "3rem",
+                borderRadius: "3rem"
+            }
+        });
+
+        themeButton.appendTo(this.innerSpace);
+
+        const themeIcon = MaterialIcons.get("palette",{
+            fill: "var(--surface-6)",
+            size: "2rem"
+        });
+
+        themeIcon.appendTo(themeButton);
+
         const themeSelector = new UIComponent({
             type: HTML.DIV,
+            id: "theme-selector",
             classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER, "surface-2"],
+            styles:{
+                width: "16rem"
+            }
         });
 
         const lightModeButton = new UIComponent({
@@ -108,6 +132,15 @@ export default class TaxMenu extends UIComponent {
                 click: async (e) => this.changeTheme("dark-you")
             },
             styles: { background : "var(--background-dark-you)" }
+        });
+
+
+        themeButton.setEvents({
+            click : (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                themeSelector.element.classList.toggle("show");
+            }
         });
 
         lightModeButton.appendTo(themeSelector);

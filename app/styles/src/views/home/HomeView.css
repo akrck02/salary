@@ -98,6 +98,22 @@ view#home span.value-data span.value {
     transition: .15s;
 }
 
+view#home #theme-selector {
+    display: none;
+}
+
+view#home #theme-selector.show {
+    display: flex;
+}
+
+
+view#home .theme-button {
+    min-width:3rem;
+    min-height:3rem;
+    border-radius: .7rem;
+  }
+
+
 view#home .theme {
     position: absolute;
     top: 20px;
@@ -139,8 +155,12 @@ view#home #calc-menu .options-title {
     font-size: 1.25rem;
     font-weight: bold;
     margin: 1rem .4rem;
+    width: calc(100% - 2rem);
 }
 
+view#home.mobile #calc-menu .options-title {
+    width: auto;
+}
 
 view#home:not(.mobile) #calc-menu .button-container {
     justify-content: left;

@@ -32,9 +32,3 @@ input[type=number] {
 .text-error {
   color: var(--error-color);
 }
-
-view#home .theme-button {
-  width:3rem;
-  height:3rem;
-  border-radius: .7rem;
-}
