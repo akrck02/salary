@@ -172,19 +172,13 @@ export class Configuration implements IObserver {
         }
 
         if(this.getConfigVariable(Configuration.LANGUAGE_KEY) == undefined) {
-            console.log(getLanguage(navigator.language));
-            
             this.setLanguage(getLanguage(navigator.language));
         }
 
         if(this.getConfigVariable(Configuration.THEME) == undefined) {
-            this.setTheme("light");
+            this.setTheme("dark");
         } else {
-            if(this.isDarkTheme()){
-                this.setDarkMode();
-            } else {
-                this.setLightMode();
-            }
+            this.setTheme(this.getConfigVariable(Configuration.THEME));
         }
     }
 
@@ -275,35 +269,7 @@ export class Configuration implements IObserver {
      */
     public setTheme(theme : string){
         this.setConfigVariable(Configuration.THEME,theme);
-    }
-
-    /**
-     * Get if animations are enabled
-     * @returns if animations are enabled
-     */
-    public isDarkTheme() : boolean{
-        return this.getConfigVariable(Configuration.THEME) === "dark";
-    }
-
-
-    public toggleTheme() {
-        if(Config.isDarkTheme()){
-            this.setLightMode();
-            return "dark";
-        } else {
-            this.setDarkMode();
-            return "light";
-        }
-    }
-
-    public setDarkMode() {
-        document.documentElement.dataset.theme = 'dark';
-        Config.setTheme("dark");
-    }
-    
-    public setLightMode() {
-        document.documentElement.dataset.theme = 'light';
-        Config.setTheme("light");
+        document.documentElement.dataset.theme = theme;
     }
 
 }

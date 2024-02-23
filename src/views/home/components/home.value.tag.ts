@@ -35,7 +35,7 @@ export default class ValueTag extends UIComponent {
         this.valueComponent = new UIComponent({
             type: HTML.SPAN,
             text: `${this.value}`,
-            classes: [ValueTag.TAG_VALUE_CLASS],
+            classes: [Gtdf.BOX_CENTER, ValueTag.TAG_VALUE_CLASS,"surface-2"],
         });
 
         this.labelComponent.appendTo(this);

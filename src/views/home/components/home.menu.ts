@@ -25,7 +25,7 @@ export default class TaxMenu extends UIComponent {
         super({
             type: HTML.DIV,
             id: TaxMenu.MENU_ID,
-            classes: [Gtdf.BOX_COLUMN, Gtdf.BOX_X_START, Gtdf.BOX_X_CENTER],
+            classes: [Gtdf.BOX_COLUMN, Gtdf.BOX_X_START, Gtdf.BOX_X_CENTER, "surface-1"],
             attributes: {
                 draggable: "true",
             },
@@ -52,6 +52,8 @@ export default class TaxMenu extends UIComponent {
      */
     show() {
         this.innerSpace.clean();
+
+        this.drawThemeSelector();
         this.drawRegionOptions();
         this.drawYearOptions();
         this.drawLanguageOptions();
@@ -61,6 +63,66 @@ export default class TaxMenu extends UIComponent {
      * Update the view with the new data
      */
     update() {}
+
+    drawThemeSelector() {
+        const themeSelector = new UIComponent({
+            type: HTML.DIV,
+            classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER, "surface-2"],
+        });
+
+        const lightModeButton = new UIComponent({
+            type: HTML.BUTTON,
+            text: Text.home.lightMode,
+            classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER, "theme-button"],
+            events: {
+                click: async (e) => this.changeTheme("light")
+            },
+            styles: { background : "var(--background-light)" }            
+        });
+
+        const lightYourModeButton = new UIComponent({
+            type: HTML.BUTTON,
+            text: Text.home.yourMode,
+            classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER, "theme-button"],
+            events: {
+                click: async (e) => this.changeTheme("light-you")
+            },
+            styles: { background : "var(--background-light-you)" }
+        });
+
+        const darkModeButton = new UIComponent({
+            type: HTML.BUTTON,
+            text: Text.home.darkMode,
+            classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER, "theme-button"],
+            events: {
+                click: async (e) => this.changeTheme("dark")
+            },
+            styles: { background : "var(--background-dark)" }
+        });
+
+        const darkYourModeButton = new UIComponent({
+            type: HTML.BUTTON,
+            text: Text.home.yourMode,
+            classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER, "theme-button"],
+            events: {
+                click: async (e) => this.changeTheme("dark-you")
+            },
+            styles: { background : "var(--background-dark-you)" }
+        });
+
+        lightModeButton.appendTo(themeSelector);
+        lightYourModeButton.appendTo(themeSelector);
+        darkModeButton.appendTo(themeSelector);
+        darkYourModeButton.appendTo(themeSelector);
+
+        themeSelector.appendTo(this.innerSpace);
+
+    }
+
+    changeTheme(theme: string) {
+        document.documentElement.dataset.theme = theme;
+        Config.setTheme(theme);
+    }
 
     /**
      * Draw region options on the menu
