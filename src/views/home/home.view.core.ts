@@ -8,6 +8,7 @@ import { Text } from "../../lang/text.js";
 @Singleton()
 @StaticImplements<ISingleton<HomeCore>>()
 export default class HomeCore extends ViewCore {
+
     public static _instance: HomeCore;
     public static instance;
 
@@ -134,6 +135,15 @@ export default class HomeCore extends ViewCore {
      */
     public isDefaultPaymentNumber(): boolean {
         return this.paymentNumber === HomeCore.AVAILABLE_PAYMENT_NUMBERS[0];
+    }
+
+
+    /**
+     * Get the current gross salary
+     * @returns 
+     */
+    public getGrossSalary(): number {
+        return this.grossSalary;
     }
 }
 
