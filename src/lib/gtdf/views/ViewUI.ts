@@ -16,7 +16,7 @@ export abstract class ViewUI extends UIComponent {
         super(details);
     }
 
-    public isPointing(name: string) {
+    public isPointing(name: string) {       
         return this.routes.includes(name);
     }
 }

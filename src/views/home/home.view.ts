@@ -39,6 +39,7 @@ export default class HomeView extends ViewUI {
         menu.appendTo(this);
 
         const calculationPanel = new CalculationPanel();
+
         calculationPanel.appendTo(this);
         this.appendTo(container);
 
