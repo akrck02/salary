@@ -18,6 +18,7 @@ export class CalculationPanel extends UIComponent {
     private static readonly FOOTER_ID = "footer";
 
     private result : UIComponent;
+    private salaryInput : UIComponent;
 
     constructor() {
         super({
@@ -25,8 +26,6 @@ export class CalculationPanel extends UIComponent {
             classes: [Gtdf.BOX_COLUMN,Gtdf.BOX_CENTER],
             id: CalculationPanel.CALC_FRAME_ID,
         });
-
-        this.show();
 
         HomeCore.updateTaxesUISignal.subscribe({
             update: async (data : ITaxesResult) => {
@@ -41,7 +40,7 @@ export class CalculationPanel extends UIComponent {
         });
     }
 
-    private show() : void {
+    public show() : void {
     
         this.clean();
         const mainFrame = new UIComponent({
@@ -61,7 +60,7 @@ export class CalculationPanel extends UIComponent {
             classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER],
         });
 
-        const salaryInput = new UIComponent({
+        this.salaryInput = new UIComponent({
             type: HTML.INPUT,
             id: CalculationPanel.SALARY_INPUT_ID,
             attributes: {   
@@ -72,7 +71,7 @@ export class CalculationPanel extends UIComponent {
                 min: "0"
             },
         });
-        salaryInput.appendTo(salaryInputPanel);
+        this.salaryInput.appendTo(salaryInputPanel);
         
         const paymentNumberInput = new UIComponent({
             type: HTML.BUTTON,  
@@ -90,7 +89,7 @@ export class CalculationPanel extends UIComponent {
                 const newIndex = index + 1 >= HomeCore.AVAILABLE_PAYMENT_NUMBERS.length ? 0 : index + 1;
                 paymentNumberInput.element.innerHTML = `${HomeCore.AVAILABLE_PAYMENT_NUMBERS[newIndex]}`;
 
-                HomeCore.instance().grossSalary = +salaryInput.getValue();
+                HomeCore.instance().grossSalary = +this.salaryInput.getValue();
                 await HomeCore.paymentNumberChangedSignal.emit(HomeCore.AVAILABLE_PAYMENT_NUMBERS[newIndex]);
 
             }
@@ -107,9 +106,9 @@ export class CalculationPanel extends UIComponent {
             text: `Akrck02 / Rayxnor - ${new Date().getFullYear()}`,
         });
       
-        salaryInput.setEvents({
+        this.salaryInput.setEvents({
             input: () => {
-               HomeCore.salaryChangedSignal.emit(+salaryInput.getValue());
+               HomeCore.salaryChangedSignal.emit(+this.salaryInput.getValue());
             }
         });
 
@@ -124,6 +123,8 @@ export class CalculationPanel extends UIComponent {
     async update(data : ITaxesResult) : Promise<void> {
     
         this.result.clean();
+
+        (this.salaryInput.element as HTMLInputElement).value =  `${HomeCore._instance.getGrossSalary()}`;
 
         if(HomeCore.instance().grossSalary > HomeCore.MAX_SALARY){
 
