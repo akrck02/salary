@@ -919,8 +919,13 @@
     const Routes = [];
     function Route(value) {
         return function (target) {
+            if (typeof value == "string") {
+                target.instance().routes = [value];
+            }
+            else {
+                target.instance().routes = value;
+            }
             console.debug(`Route registered /${value}`);
-            target.instance().routes = value;
             Routes.push(target.instance());
         };
     }
@@ -943,13 +948,13 @@
         return (constructor) => { };
     }
 
-    var __decorate$7 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var __decorate$6 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
         else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
-    var __metadata$7 = (undefined && undefined.__metadata) || function (k, v) {
+    var __metadata$6 = (undefined && undefined.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     let ViewUI = class ViewUI extends UIComponent {
@@ -964,18 +969,18 @@
             return this.routes.includes(name);
         }
     };
-    ViewUI = __decorate$7([
+    ViewUI = __decorate$6([
         StaticImplements(),
-        __metadata$7("design:paramtypes", [Object])
+        __metadata$6("design:paramtypes", [Object])
     ], ViewUI);
 
-    var __decorate$6 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
         else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
-    var __metadata$6 = (undefined && undefined.__metadata) || function (k, v) {
+    var __metadata$5 = (undefined && undefined.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var ErrorView_1;
@@ -1024,10 +1029,10 @@
     ErrorView.ID = "error";
     ErrorView.IMAGE_ID = "error-img";
     ErrorView.TITLE_ID = "error-title";
-    ErrorView = ErrorView_1 = __decorate$6([
+    ErrorView = ErrorView_1 = __decorate$5([
         Route("error"),
         Singleton(),
-        __metadata$6("design:paramtypes", [])
+        __metadata$5("design:paramtypes", [])
     ], ErrorView);
     var ErrorView$1 = ErrorView;
 
@@ -1384,13 +1389,13 @@
     }
     TaxService.taxModel = new TaxModel();
 
-    var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
         else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
-    var __metadata$5 = (undefined && undefined.__metadata) || function (k, v) {
+    var __metadata$4 = (undefined && undefined.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var HomeCore_1;
@@ -1469,6 +1474,13 @@
         isDefaultPaymentNumber() {
             return this.paymentNumber === HomeCore_1.AVAILABLE_PAYMENT_NUMBERS[0];
         }
+        /**
+         * Get the current gross salary
+         * @returns
+         */
+        getGrossSalary() {
+            return this.grossSalary;
+        }
     };
     HomeCore.updateTaxesUISignal = new Signal("updateTaxesUI");
     HomeCore.taxesCannotBeLoadedSignal = new Signal("taxesCannotBeLoaded");
@@ -1484,10 +1496,10 @@
     HomeCore.MIN_SALARY = 0;
     HomeCore.DEFAULT_REGION = "paisvasco";
     HomeCore.AVAILABLE_PAYMENT_NUMBERS = [14, 12];
-    HomeCore = HomeCore_1 = __decorate$5([
+    HomeCore = HomeCore_1 = __decorate$4([
         Singleton(),
         StaticImplements(),
-        __metadata$5("design:paramtypes", [])
+        __metadata$4("design:paramtypes", [])
     ], HomeCore);
     var HomeCore$1 = HomeCore;
 
@@ -1770,7 +1782,6 @@
                 classes: [Gtdf.BOX_COLUMN, Gtdf.BOX_CENTER],
                 id: CalculationPanel.CALC_FRAME_ID,
             });
-            this.show();
             HomeCore$1.updateTaxesUISignal.subscribe({
                 update: async (data) => {
                     await this.update(data);
@@ -1798,7 +1809,7 @@
                 id: CalculationPanel.SALARY_INPUT_PANEL_ID,
                 classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER],
             });
-            const salaryInput = new UIComponent({
+            this.salaryInput = new UIComponent({
                 type: HTML.INPUT,
                 id: CalculationPanel.SALARY_INPUT_ID,
                 attributes: {
@@ -1809,7 +1820,7 @@
                     min: "0"
                 },
             });
-            salaryInput.appendTo(salaryInputPanel);
+            this.salaryInput.appendTo(salaryInputPanel);
             const paymentNumberInput = new UIComponent({
                 type: HTML.BUTTON,
                 text: `${HomeCore$1.AVAILABLE_PAYMENT_NUMBERS[0]}`,
@@ -1823,7 +1834,7 @@
                     const index = HomeCore$1.AVAILABLE_PAYMENT_NUMBERS.indexOf(paymentNumber);
                     const newIndex = index + 1 >= HomeCore$1.AVAILABLE_PAYMENT_NUMBERS.length ? 0 : index + 1;
                     paymentNumberInput.element.innerHTML = `${HomeCore$1.AVAILABLE_PAYMENT_NUMBERS[newIndex]}`;
-                    HomeCore$1.instance().grossSalary = +salaryInput.getValue();
+                    HomeCore$1.instance().grossSalary = +this.salaryInput.getValue();
                     await HomeCore$1.paymentNumberChangedSignal.emit(HomeCore$1.AVAILABLE_PAYMENT_NUMBERS[newIndex]);
                 }
             });
@@ -1836,9 +1847,9 @@
                 id: CalculationPanel.FOOTER_ID,
                 text: `Akrck02 / Rayxnor - ${new Date().getFullYear()}`,
             });
-            salaryInput.setEvents({
+            this.salaryInput.setEvents({
                 input: () => {
-                    HomeCore$1.salaryChangedSignal.emit(+salaryInput.getValue());
+                    HomeCore$1.salaryChangedSignal.emit(+this.salaryInput.getValue());
                 }
             });
             title.appendTo(mainFrame);
@@ -1849,6 +1860,7 @@
         }
         async update(data) {
             this.result.clean();
+            this.salaryInput.element.value = `${HomeCore$1._instance.getGrossSalary()}`;
             if (HomeCore$1.instance().grossSalary > HomeCore$1.MAX_SALARY) {
                 const warning = new UIComponent({
                     type: HTML.B,
@@ -1886,13 +1898,13 @@
     CalculationPanel.RESULT_ID = "result";
     CalculationPanel.FOOTER_ID = "footer";
 
-    var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
         else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
-    var __metadata$4 = (undefined && undefined.__metadata) || function (k, v) {
+    var __metadata$3 = (undefined && undefined.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var HomeView_1;
@@ -1912,6 +1924,7 @@
             const menu = new TaxMenu();
             menu.appendTo(this);
             const calculationPanel = new CalculationPanel();
+            calculationPanel.show();
             calculationPanel.appendTo(this);
             this.appendTo(container);
             await HomeCore$1.taxModelChangedSignal.emit({
@@ -1926,121 +1939,12 @@
     };
     HomeView.ID = "home";
     HomeView.MOBILE_CLASS = "mobile";
-    HomeView = HomeView_1 = __decorate$4([
+    HomeView = HomeView_1 = __decorate$3([
         Route(["", "calculate", undefined]),
         Singleton(),
-        __metadata$4("design:paramtypes", [])
+        __metadata$3("design:paramtypes", [])
     ], HomeView);
     var HomeView$1 = HomeView;
-
-    class ObservableUIComponent extends UIComponent {
-        constructor(properties) {
-            super(properties);
-            this.observable = properties.observable;
-            this.observable.subscribe(this);
-        }
-        async update() {
-            console.warn("ObservableUIComponent.update() not implemented.");
-        }
-    }
-
-    class Observable {
-        constructor() {
-            this.observers = [];
-            let a = this;
-            this.content = {};
-            this.content = new Proxy(this.content, {
-                set: function (target, key, value) {
-                    target[key] = value;
-                    a.notify();
-                    return true;
-                }
-            });
-        }
-        /**
-         * Subscribe an observer to the observable
-         * @param observer The observer to subscribe
-         */
-        subscribe(observer) {
-            this.observers.push(observer);
-        }
-        /**
-         * Unsubscribe an observer from the observable
-         * @param observer The observer to unsubscribe
-         */
-        unsubscribe(observer) {
-            this.observers = this.observers.filter((obs) => obs !== observer);
-        }
-        async notify() {
-            for (let observer of this.observers) {
-                try {
-                    await observer.update();
-                }
-                catch (e) {
-                    console.error("Error notifying observer", e);
-                }
-            }
-        }
-    }
-
-    var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-        return c > 3 && r && Object.defineProperty(target, key, r), r;
-    };
-    var __metadata$3 = (undefined && undefined.__metadata) || function (k, v) {
-        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-    };
-    let TestView = class TestView extends ViewUI {
-        constructor() {
-            super({
-                type: HTML.VIEW,
-                classes: [Gtdf.BOX_ROW, Gtdf.BOX_CENTER],
-                styles: {
-                    width: "100%",
-                    height: "100vh"
-                }
-            });
-        }
-        async show(params, container) {
-            const observable = new Observable();
-            const input = new ObservableUIComponent({
-                type: "div",
-                text: "Change observable",
-                classes: [Gtdf.BOX_CENTER, Gtdf.TEXT_CENTER],
-                styles: {
-                    background: "blue",
-                    width: "15rem",
-                    height: "6rem",
-                    borderRadius: ".35rem",
-                    color: "#1A1A1A",
-                    fontSize: "1.35rem",
-                    transition: ".35s"
-                }, observable: observable
-            });
-            input.setEvents({
-                click: () => {
-                    observable.content.paymentNumber = Math.random() > .5 ? 12 : 14;
-                }
-            });
-            input.update = async () => {
-                const rgb = () => Math.round(Math.random() * 255);
-                input.setStyles({
-                    background: `rgb(${rgb()},${rgb()},${rgb()})`
-                });
-                console.log(observable.content);
-            };
-            input.appendTo(this);
-            this.appendTo(container);
-        }
-    };
-    TestView = __decorate$3([
-        Route(["test"]),
-        Singleton(),
-        __metadata$3("design:paramtypes", [])
-    ], TestView);
-    var TestView$1 = TestView;
 
     var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2054,7 +1958,7 @@
     var Router_1;
     let Router = Router_1 = class Router {
         constructor() {
-            this.Endpoints = [HomeView$1, ErrorView$1, TestView$1];
+            this.Endpoints = [HomeView$1, ErrorView$1];
             {
                 this.parent = document.getElementById("view-container");
                 //If no parent is present on the HTML file throws an error
@@ -2070,7 +1974,7 @@
                     },
                 });
                 this.container.appendTo(this.parent);
-                this.changeViewSignal = new Signal("changeView");
+                this.changeViewSignal = new Signal(Router_1.CHAGE_VIEW_SIGNAL);
                 SignalBuffer.add(this.changeViewSignal);
                 this.changeViewSignal.subscribe(this);
                 this.viewChangedSignal = new Signal(Router_1.VIEW_CHANGED_SIGNAL);
@@ -2096,20 +2000,23 @@
                 this.clear();
                 this.container.clean();
                 let found = false;
-                Routes.forEach((route) => {
+                for (const route of Routes) {
+                    if (found) {
+                        break;
+                    }
                     if (route.isPointing(params[0])) {
                         route.clean();
                         route.show(params.splice(1), this.container);
-                        this.viewChangedSignal.emit({
+                        await this.viewChangedSignal.emit({
                             view: route.routes[0],
                             params: params.splice(1),
                         });
                         found = true;
                     }
-                });
+                }
                 if (!found) {
                     ErrorView$1.instance().show(["404"], this.container);
-                    this.viewChangedSignal.emit({
+                    await this.viewChangedSignal.emit({
                         view: ErrorView$1.instance().routes[0],
                         params: ["404"],
                     });
