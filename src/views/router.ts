@@ -9,7 +9,6 @@ import { ISingleton, Singleton } from "../lib/gtdf/decorators/Singleton.js";
 import { StaticImplements } from "../lib/gtdf/core/static/static.interface.js";
 import { Routes } from "../lib/gtdf/decorators/Route.js";
 import { Signal } from "../lib/gtdf/core/signals/signal.js";
-import TestView from "./test/test.view.js";
 
 @Singleton()
 @StaticImplements<ISingleton<Router>>()
@@ -48,7 +47,7 @@ export default class Router implements IObserver {
 
             this.container.appendTo(this.parent);
 
-            this.changeViewSignal = new Signal("changeView");
+            this.changeViewSignal = new Signal(Router.CHAGE_VIEW_SIGNAL);
             SignalBuffer.add(this.changeViewSignal);
             this.changeViewSignal.subscribe(this);
 
@@ -65,43 +64,48 @@ export default class Router implements IObserver {
         let params = [];
         if (data.params) {
             params.push(data.view);
-            params = params.concat(data.params);
+            params = params.concat(data.params);            
         } 
 
         await this.load(params);
     }
 
-    Endpoints = [HomeView,  ErrorView, TestView];
+    Endpoints = [HomeView,  ErrorView];
 
     /**
      * Load the app state with the given params
      * @param params The list of params
      */
     public async load(params: string[]) {
-
         try {
             this.clear();
             this.container.clean();
 
             let found = false;
-            Routes.forEach((route) => {
+            for (const route of Routes) {
+                
+                if(found){
+                    break;
+                }
+
                 if (route.isPointing(params[0])) {
                     route.clean();
                     route.show(params.splice(1), this.container);
 
-                    this.viewChangedSignal.emit({
+                    await this.viewChangedSignal.emit({
                         view: route.routes[0],
                         params: params.splice(1),
                     });
 
                     found = true;
                 }
-            });
+            }
+
 
             if (!found) {
                 ErrorView.instance().show(["404"], this.container);
 
-                this.viewChangedSignal.emit({
+                await this.viewChangedSignal.emit({
                     view: ErrorView.instance().routes[0],
                     params: ["404"],
                 });
