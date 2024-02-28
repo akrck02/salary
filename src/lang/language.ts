@@ -1,6 +1,7 @@
 export const Language = {
     ENGLISH : "en",
     SPANISH : "es",
+    GALICIAN : "gl"
 }
 
 /**
