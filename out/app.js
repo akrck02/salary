@@ -526,6 +526,7 @@
     const Language = {
         ENGLISH: "en",
         SPANISH: "es",
+        GALICIAN: "gl"
     };
     /**
      * Get the language given a locale
