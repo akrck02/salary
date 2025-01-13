@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-      "target": "ES2020",
+      "target": "ES2021",
       "outDir": "./temp/src/",
       "rootDir": "./src/",
       "esModuleInterop": true,
