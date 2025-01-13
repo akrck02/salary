@@ -1492,7 +1492,7 @@
     HomeCore.AVAILABLE_REGIONS = [
         "paisvasco",
     ];
-    HomeCore.AVAILABLE_YEARS = ["2024", "2023", "2022"];
+    HomeCore.AVAILABLE_YEARS = ["2025", "2024", "2023", "2022"];
     HomeCore.MAX_SALARY = 1000000;
     HomeCore.MIN_SALARY = 0;
     HomeCore.DEFAULT_REGION = "paisvasco";
