@@ -36,7 +36,7 @@ export default class HomeCore extends ViewCore {
         "paisvasco",
     ];
 
-    public static readonly AVAILABLE_YEARS = ["2024", "2023", "2022"];
+    public static readonly AVAILABLE_YEARS = ["2025","2024", "2023", "2022"];
 
     public static readonly MAX_SALARY = 1000000;
     public static readonly MIN_SALARY = 0;
