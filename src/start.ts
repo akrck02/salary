@@ -1,5 +1,5 @@
 import { setRoute, showRoute } from "./lib/router.js";
-import { showHomeView } from "./views/home.js";
+import { showHomeView } from "./views/home/home.js";
 
 /**
  * When the dynamic URL changes loads

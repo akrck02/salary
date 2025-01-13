@@ -5,10 +5,6 @@
       "rootDir": "./src/",
       "esModuleInterop": true,
   
-      /* Experimental Options */
-      "experimentalDecorators": true,
-      "emitDecoratorMetadata": true ,
-  
       /* Advanced Options */
       "skipLibCheck": true,
       "forceConsistentCasingInFileNames": true

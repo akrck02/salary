@@ -30,7 +30,7 @@ const AVAILABLE_LANGUAGES = [
 ]
 
 /** This is the path of the i18n file structure **/
-const I18N_PATH = "./i18n" 
+const I18N_PATH = "./resources/i18n" 
 
 /** This is the buffer **/ 
 const buffer : Map<string, Object> = new Map()
