@@ -3,6 +3,7 @@ import { BubbleUI } from "../../lib/bubble.js"
 import { uiComponent } from "../../lib/dom.js"
 import { Html } from "../../lib/html.js"
 import { loadTextBundle } from "../../lib/i18n.js"
+import { homeDisplay } from "./home.display.js"
 import { homeMenu } from "./home.menu.js"
 
 /**
@@ -21,5 +22,8 @@ export async function showHomeView(_params : string[], container : HTMLElement) 
   
   const menu = homeMenu()
   homeView.appendChild(menu) 
+
+  const display = homeDisplay()
+  homeView.appendChild(display)
 }
 

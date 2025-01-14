@@ -7,6 +7,7 @@
   --background-dark: #1a1a1a;
   --background-light-you: #d2e4f9;
   --background-dark-you: #06182d;
+  --primary-color : #4a5497
 }
 
 :root[data-grayscale="true"] body {
