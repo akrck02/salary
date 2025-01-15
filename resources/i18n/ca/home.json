@@ -1,0 +1,12 @@
+{
+	"app.name": "Salari",
+	"title": "Inici",
+	"description": "Introdueix el teu salari anual i selecciona el nombre de pagues.",
+	"salary.gross": "Salari brut",
+	"salary": "Salari",
+	"extra": "Extra",
+	"pit": "IRPF",
+	"years": "Anys",
+	"regions": "Regions",
+	"languages": "Regions"
+}
