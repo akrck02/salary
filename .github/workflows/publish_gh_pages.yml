@@ -16,7 +16,10 @@ jobs:
  
     - name: Transpile typescript
       run: tsc
-     
+    
+    - name: Show directories
+      run: ls -lha
+
     - name: Minify the js ha
       run: rollup temp/start.js --file out/start.js --format iife
 
