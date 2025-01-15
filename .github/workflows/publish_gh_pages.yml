@@ -28,7 +28,16 @@ jobs:
 
     - name: Remove innecesary files and directories
       run: rm -rf .gitignore temp styles/src src bin environment.js styles.env tsconfig.json .github 
-      
+  
+    - name: Create directories
+      run: mkdir styles/src temp/src/
+
+    - name: Move javascript
+      run: mv out/start.js temp/src/start.js 
+
+    - name: Move css
+      run: mv styles/out/master.css styles/src/master.css
+
     - name: Check the output
       run: ls -lha .
 
