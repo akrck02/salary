@@ -18,7 +18,7 @@ jobs:
       run: tsc
     
     - name: Show directories
-      run: ls -lha
+      run: ls -lha temp
 
     - name: Minify the js ha
       run: rollup ./temp/start.js --file ./out/start.js --format iife
