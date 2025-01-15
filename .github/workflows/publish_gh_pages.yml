@@ -30,7 +30,7 @@ jobs:
       run: rm -rf .gitignore temp styles/src src bin environment.js styles.env tsconfig.json .github 
   
     - name: Create directories
-      run: mkdir styles/src temp/src/
+      run: mkdir -p styles/src temp/src/
 
     - name: Move javascript
       run: mv out/start.js temp/src/start.js 
