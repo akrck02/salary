@@ -1,4 +1,4 @@
 {
-    "cannotLoadTax" : "No se ha podido cargar el modelo de impuestos",
-    "salaryTooHigh" : "Eres demasiado rico para este servicio."
+	"cannot.load.tax": "No se ha podido cargar el modelo de impuestos",
+	"salary.too.high": "Eres demasiado rico para este servicio."
 }

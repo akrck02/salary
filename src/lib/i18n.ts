@@ -18,6 +18,7 @@ export const Languages = {
   English: { name: "english", main: "en", locales: ["en", "en-US", "en-GB"] },
   Spanish: { name: "spanish", main: "es", locales: ["es", "es-ES"] },
   Galician: { name: "galician", main : "gl", locales: ["gl", "gl-ES"] },
+  Catala: { name: "catala", main:"ca", locales: ["ca","ca-ES"] }
 }
 
 /** This language will be used if no other language is set */
@@ -26,7 +27,9 @@ const DEFAULT_LANGUAGE : ILanguage = Languages.English
 /** Set here the available languages for the app **/
 const AVAILABLE_LANGUAGES = [
   Languages.English,
-  Languages.Spanish
+  Languages.Spanish,
+  Languages.Galician,
+  Languages.Catala
 ]
 
 /** This is the path of the i18n file structure **/

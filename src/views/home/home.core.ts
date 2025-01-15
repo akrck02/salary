@@ -9,8 +9,15 @@ export const MIN_SALARY = 0
 export let currentRegion : string = AVAILABLE_REGIONS[0]
 export let currentYear : number = AVAILABLE_YEARS[0]
 export let grossSalary : number = MIN_SALARY
-export let paymentNumber : number = AVAILABLE_PAYMENT_NUMBERS[0]
 
 export function setGrossSalary(salary : number) {
   grossSalary = Math.max(0, salary)
+}
+
+export function setYear(year : number) {
+  currentYear = year
+}
+
+export function setRegion(region : string) {
+  currentRegion = region
 }

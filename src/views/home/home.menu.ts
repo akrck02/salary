@@ -2,8 +2,12 @@ import { HomeTexts, TextBundles } from "../../core/texts.js";
 import { BubbleUI } from "../../lib/bubble.js";
 import { setDomClasses, setDomEvents, uiComponent } from "../../lib/dom.js";
 import { Html } from "../../lib/html.js";
-import { getText, Languages } from "../../lib/i18n.js";
-import { AVAILABLE_REGIONS, AVAILABLE_YEARS, currentRegion, currentYear } from "./home.core.js";
+import { getText, Languages, loadTextBundle, setCurrentLanguage } from "../../lib/i18n.js";
+import { connectToSignal, emitSignal } from "../../lib/signals.js";
+import { reloadTextSignal } from "../../services/language.js";
+import { loadTaxModels } from "../../services/taxes.js";
+import { AVAILABLE_REGIONS, AVAILABLE_YEARS, currentRegion, currentYear, setRegion, setYear } from "./home.core.js";
+import { refreshTaxCalc } from "./home.display.js";
 
 // ---------- constants ------------
 const MENU_ID = "calc-menu";
@@ -28,8 +32,17 @@ export function homeMenu() : HTMLElement {
   const homeMenu = uiComponent({
     type: Html.Div,
     id : MENU_ID,
-    classes : [BubbleUI.BoxColumn, BubbleUI.BoxXStart, BubbleUI.BoxYStart, "surface-1"]
+    classes : [BubbleUI.BoxColumn, BubbleUI.BoxXStart, BubbleUI.BoxYStart, "surface-1"],
+    attributes : {
+      draggable : "true"
+    }
   })
+
+  setDomEvents(homeMenu, {
+    click : () => {
+      homeMenu.classList.toggle("show")
+    }
+  });
 
   const innerSpace = uiComponent({
     type : Html.Div,
@@ -42,6 +55,7 @@ export function homeMenu() : HTMLElement {
   const regionTitle = uiComponent({
     type : Html.H3,
     text : getText(TextBundles.Home, HomeTexts.Regions),
+    data : { i18n : `${TextBundles.Home}:${HomeTexts.Regions}` },
     classes : [OPTIONS_TITLE_CLASS]
   })
 
@@ -49,6 +63,7 @@ export function homeMenu() : HTMLElement {
   const yearTitle = uiComponent({
     type : Html.H3,
     text : getText(TextBundles.Home, HomeTexts.Years),
+    data : { i18n : `${TextBundles.Home}:${HomeTexts.Years}`},
     classes : [OPTIONS_TITLE_CLASS]
   })
 
@@ -56,6 +71,7 @@ export function homeMenu() : HTMLElement {
   const languageTitle = uiComponent({
     type : Html.H3,
     text : getText(TextBundles.Home, HomeTexts.Languages),
+    data : { i18n : `${TextBundles.Home}:${HomeTexts.Languages}`},
     classes : [OPTIONS_TITLE_CLASS]
   })
 
@@ -90,6 +106,7 @@ function regionSelectionSection() : HTMLElement {
       type : Html.Button,
       id: region,
       text : getText(TextBundles.Regions, region),
+      data : { i18n : `${TextBundles.Regions}:${region}`},
       classes : [MENU_OPTION_CLASS, REGION_OPTION_CLASS]
     })
 
@@ -98,13 +115,16 @@ function regionSelectionSection() : HTMLElement {
     }
   
     setDomEvents(button, {
-      click : () => {
+      click : async () => {
         for (const regionButton of regionButtons) {
           if(button != regionButton){
             regionButton.classList.remove(SELECTED_CLASS)
           }
         }
         button.classList.add(SELECTED_CLASS)
+        setRegion(region)
+        await loadTaxModels(currentRegion, currentYear)
+        emitSignal(refreshTaxCalc, undefined)
       }
     })
 
@@ -140,13 +160,16 @@ function yearSelectionSection() : HTMLElement {
     }
 
     setDomEvents(button, {
-      click : () => {
+      click : async () => {
         for (const yearButton of yearButtons) {
           if(button != yearButton){
             yearButton.classList.remove(SELECTED_CLASS)
           }
         }
         button.classList.add(SELECTED_CLASS)
+        setYear(year)
+        await loadTaxModels(currentRegion, currentYear)
+        emitSignal(refreshTaxCalc, undefined)
       }
     })
 
@@ -169,11 +192,31 @@ function languageSelectionSection() : HTMLElement {
     styles : { width: "100%" }
   })
 
-  for (const languages in Languages) {
+  for (const language in Languages) {
     const button = uiComponent({
       type : Html.Button,
-      text : languages,
+      text : language,
+      data : { i18n : `${TextBundles.Languages}:${language.toLowerCase()}`},
       classes : [MENU_OPTION_CLASS, LANG_OPTION_CLASS]
+    })
+
+    if(Languages[language].locales.includes(navigator.language)) {
+      setDomClasses(button, [SELECTED_CLASS])
+    }
+
+    setDomEvents(button, {
+      click : async () => {
+
+        for (const langButton of languageButtons){
+          if(button != langButton) {
+            langButton.classList.remove(SELECTED_CLASS)
+          }
+        }
+        button.classList.add(SELECTED_CLASS)
+
+        await setCurrentLanguage(Languages[language].main, true)
+        emitSignal(reloadTextSignal, undefined)
+      }
     })
 
     languageButtons.push(button)

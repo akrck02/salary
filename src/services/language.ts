@@ -1,0 +1,18 @@
+import { getText, loadTextBundle } from "../lib/i18n.js";
+import { connectToSignal, setSignal } from "../lib/signals.js";
+
+export const reloadTextSignal = setSignal()
+connectToSignal(reloadTextSignal, reloadText)
+
+
+async function reloadText() {
+  
+  const elements = document.querySelectorAll("*[data-i18n]")
+
+  for (const element of elements) {
+    const parts = element.getAttribute("data-i18n").split(":")
+    console.log(parts);
+    element.textContent = getText(parts[0], parts[1])
+  }
+
+}

@@ -3,6 +3,8 @@ import { BubbleUI } from "../../lib/bubble.js";
 import { setDomEvents, uiComponent } from "../../lib/dom.js";
 import { Html } from "../../lib/html.js";
 import { getText, loadTextBundle } from "../../lib/i18n.js";
+import { connectToSignal, emitSignal, setSignal } from "../../lib/signals.js";
+import { getExtraPayment, getIrpf, getSalaryWithTaxes, isDefaultPaymentNumber, setPaymentNumber } from "../../services/taxes.js";
 import { AVAILABLE_PAYMENT_NUMBERS, grossSalary, MAX_SALARY, setGrossSalary } from "./home.core.js";
 
 const CALC_FRAME_ID = "calc-frame"
@@ -13,6 +15,12 @@ const SALARY_INPUT_ID = "salary"
 const PAYMENT_NUMBER_INPUT_ID = "payment-number"
 const RESULT_ID = "result"
 const FOOTER_ID = "footer"
+
+const TAG_CLASS = "value-data";
+const TAG_VALUE_CLASS = "value";
+const TAG_LABEL_CLASS = "label";
+
+export const refreshTaxCalc = setSignal()
 
 let resultPanel : HTMLElement
 
@@ -33,6 +41,7 @@ export function homeDisplay() : HTMLElement {
   const title = uiComponent({
     type: Html.H1,
     text: getText(TextBundles.Home, HomeTexts.GrossSalary),
+    data: { i18n : `${TextBundles.Home}:${HomeTexts.GrossSalary}`},
     id : MAIN_TITLE_ID,
   })
   mainFrame.appendChild(title)
@@ -56,7 +65,10 @@ export function homeDisplay() : HTMLElement {
     },
   }) as HTMLInputElement
   salaryInputPanel.appendChild(salaryInput)
-        
+  setDomEvents(salaryInput, {
+    input: () => emitSignal(refreshTaxCalc, undefined)
+  })
+  
   const paymentNumberInput = uiComponent({
     type: Html.Button,  
     text: `${AVAILABLE_PAYMENT_NUMBERS[0]}`,
@@ -67,18 +79,23 @@ export function homeDisplay() : HTMLElement {
 
   setDomEvents(paymentNumberInput, {
     click: async () => {
-      let paymentNumber = +paymentNumberInput.innerHTML;
-      const index = AVAILABLE_PAYMENT_NUMBERS.indexOf(paymentNumber);
-
+      let paymentNumber = +paymentNumberInput.innerHTML
+      const index = AVAILABLE_PAYMENT_NUMBERS.indexOf(paymentNumber)
       const newIndex = index + 1 >= AVAILABLE_PAYMENT_NUMBERS.length ? 0 : index + 1
       paymentNumberInput.innerHTML = `${AVAILABLE_PAYMENT_NUMBERS[newIndex]}`
-
-      setGrossSalary(+salaryInput.value)
-      //await HomeCore.paymentNumberChangedSignal.emit(HomeCore.AVAILABLE_PAYMENT_NUMBERS[newIndex]);
+      
+      paymentNumber = AVAILABLE_PAYMENT_NUMBERS[newIndex]
+      setPaymentNumber(paymentNumber)  
+      emitSignal(refreshTaxCalc, undefined)
 
     }
   })
 
+  connectToSignal(refreshTaxCalc, async () => {
+    setGrossSalary(+salaryInput.value)
+    updateResultPanel()
+  })
+        
   resultPanel = uiComponent({
     type: Html.Div,
     id: RESULT_ID,
@@ -89,22 +106,20 @@ export function homeDisplay() : HTMLElement {
     type: Html.Footer,
     id: FOOTER_ID,
     text: `Akrck02 / Rayxnor - ${new Date().getFullYear()}`,
-  });
-      
-  setDomEvents(result, {
-    input: () => {
-      //HomeCore.salaryChangedSignal.emit(+salaryInput.getValue());
-    }
-  });
-  
+  })
+   
   display.appendChild(footer)
   return display
 }
 
-
-
 function updateResultPanel() {
-  loadTextBundle(TextBundles.Error)
+  loadTextBundle(TextBundles.Errors)
+  
+  resultPanel.innerHTML = ""
+  
+  if(grossSalary == 0) {
+   return
+  }
 
   if(grossSalary > MAX_SALARY){
 
@@ -112,21 +127,64 @@ function updateResultPanel() {
       type: Html.B,
       classes: ["text-error", BubbleUI.TextCenter, BubbleUI.BoxRow, BubbleUI.BoxCenter],
       text: getText(TextBundles.Errors, ErrorTexts.SalaryTooHigh),
+      data : {i18n : `${TextBundles.Errors}:${ErrorTexts.SalaryTooHigh}`}
     })
     resultPanel.appendChild(warning)
     return
   }
 
 
-  const salaryResult = new ValueTag(Text.home.salary, `${data.salary}€`)
-  resultPanel.appendChild(salaryResult.appendTo)
+  const salaryResult = valueTag(
+    TextBundles.Home,
+    HomeTexts.Salary, 
+    `${getSalaryWithTaxes(grossSalary)}€`
+  )
+  resultPanel.appendChild(salaryResult)
 
-  if(HomeCore.instance().isDefaultPaymentNumber()){
-      const extraPaymentResult = new ValueTag(Text.home.extra, `${data.extraPayment}€`)
-      extraPaymentResult.appendTo(this.result)
+  if(isDefaultPaymentNumber()){
+      const extraPaymentResult = valueTag(
+        TextBundles.Home, 
+        HomeTexts.Extra, 
+        `${getExtraPayment(grossSalary)}€`
+      )
+      resultPanel.appendChild(extraPaymentResult)
   }
 
-  const irpfPercentageResult = new ValueTag(Text.home.incomeTax, `${data.irpfPercentage}%`)
-  irpfPercentageResult.appendTo(this.result)         
+  const irpfPercentageResult = valueTag( 
+    TextBundles.Home, 
+    HomeTexts.Pit,
+    `${getIrpf(grossSalary)}%`
+  )
+  resultPanel.appendChild(irpfPercentageResult)         
 
 }
+
+
+function valueTag(bundle : string, label : string, value : string) : HTMLElement {
+      
+  const tag = uiComponent({
+    type: Html.Span,
+    classes: [BubbleUI.BoxRow, BubbleUI.BoxYCenter, BubbleUI.BoxXBetween, TAG_CLASS],
+  })
+
+  const labelComponent = uiComponent({
+    type: Html.Label,
+    text: getText(bundle, label),
+    data: { i18n : `${bundle}:${label}`},
+    classes: [TAG_LABEL_CLASS],
+    styles: {
+      fontSize: "1.1rem",
+    }
+  })
+  tag.appendChild(labelComponent)
+
+  const valueComponent = uiComponent({
+    type: Html.Span,
+    text: `${value}`,
+    classes: [TAG_VALUE_CLASS],
+  })
+  tag.appendChild(valueComponent)
+
+  return tag
+}
+
