@@ -21,7 +21,7 @@ jobs:
       run: ls -lha temp
 
     - name: Minify the js ha
-      run: rollup ./temp/start.js --file ./out/start.js --format iife
+      run: rollup ./temp/src/start.js --file ./out/start.js --format iife
 
     - name: Minify the css
       run: ./bin/lit -f styles.env
