@@ -15,6 +15,7 @@ export const ErrorTexts = {
 export const HomeTexts = {
   AppName : "app.name",
   Title : "title",
+  Description: "description",
   GrossSalary : "salary.gross",
   Salary : "salary",
   Extra : "extra",

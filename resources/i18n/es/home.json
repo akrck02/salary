@@ -1,6 +1,7 @@
 {
 	"app.name": "Salary",
 	"title": "Inicio",
+	"description": "Introduce tu salario anual y selecciona el número de pagas.",
 	"salary.gross": "Salario bruto",
 	"salary": "Salario",
 	"extra": "Extra",

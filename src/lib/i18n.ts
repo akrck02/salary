@@ -15,19 +15,19 @@ export interface ILanguage {
  * INFO: Add languages here as needed 
  */
 export const Languages = {
-  English: { name: "english", main: "en", locales: ["en", "en-US", "en-GB"] },
   Spanish: { name: "spanish", main: "es", locales: ["es", "es-ES"] },
+  English: { name: "english", main: "en", locales: ["en", "en-US", "en-GB"] },
   Galician: { name: "galician", main : "gl", locales: ["gl", "gl-ES"] },
   Catala: { name: "catala", main:"ca", locales: ["ca","ca-ES"] }
 }
 
 /** This language will be used if no other language is set */
-const DEFAULT_LANGUAGE : ILanguage = Languages.English
+const DEFAULT_LANGUAGE : ILanguage = Languages.Spanish
 
 /** Set here the available languages for the app **/
 const AVAILABLE_LANGUAGES = [
-  Languages.English,
   Languages.Spanish,
+  Languages.English,
   Languages.Galician,
   Languages.Catala
 ]

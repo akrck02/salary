@@ -95,7 +95,7 @@ function regionSelectionSection() : HTMLElement {
   
   const regionSelectionSection = uiComponent({
     type : Html.Div,
-    classes : [BUTTON_CONTAINER_CLASS, BubbleUI.BoxColumn, BubbleUI.BoxXStart],
+    classes : [BUTTON_CONTAINER_CLASS, BubbleUI.BoxRow, BubbleUI.BoxXStart],
     styles : { width : "100%" }
   })
  
@@ -143,7 +143,7 @@ function yearSelectionSection() : HTMLElement {
   
   const yearSelectionSection = uiComponent({
     type : Html.Div,
-    classes : [BUTTON_CONTAINER_CLASS, BubbleUI.BoxColumn, BubbleUI.BoxXStart],
+    classes : [BUTTON_CONTAINER_CLASS, BubbleUI.BoxRow, BubbleUI.BoxXStart],
     styles : { width: "100%" }
   })
 
@@ -188,7 +188,7 @@ function languageSelectionSection() : HTMLElement {
   
   const languageSelectionSection = uiComponent({
     type : Html.Div,
-    classes : [BUTTON_CONTAINER_CLASS, BubbleUI.BoxColumn, BubbleUI.BoxXStart],
+    classes : [BUTTON_CONTAINER_CLASS, BubbleUI.BoxRow, BubbleUI.BoxXStart],
     styles : { width: "100%" }
   })
 

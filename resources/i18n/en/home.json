@@ -1,11 +1,12 @@
 {
-    "app.name" : "Salary",
-    "title" : "Home",
-    "salary.gross" : "Gross salary",
-    "salary" : "Salary",
-    "extra" : "Extra",
-    "pit" : "PIT",
-    "years" : "Years",
-    "regions" : "Regions",
-    "languages" : "Languages"
+	"app.name": "Salary",
+	"title": "Home",
+	"description": "Enter your annual salary and select the number of payments.",
+	"salary.gross": "Gross salary",
+	"salary": "Salary",
+	"extra": "Extra",
+	"pit": "PIT",
+	"years": "Years",
+	"regions": "Regions",
+	"languages": "Languages"
 }

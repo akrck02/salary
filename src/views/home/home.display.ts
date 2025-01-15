@@ -45,6 +45,20 @@ export function homeDisplay() : HTMLElement {
     id : MAIN_TITLE_ID,
   })
   mainFrame.appendChild(title)
+  
+  const description = uiComponent({
+    type: Html.H2,
+    text: getText(TextBundles.Home, HomeTexts.Description),
+    data: { i18n : `${TextBundles.Home}:${HomeTexts.Description}`},
+    styles : {
+      fontSize: ".9rem",
+      maxWidth: "17rem",
+      margin: "0",
+      marginBottom: "1rem",
+      opacity: "0.5",
+    }    
+  })
+  mainFrame.appendChild(description)
 
   const salaryInputPanel = uiComponent({
     type: Html.Div,
@@ -66,7 +80,10 @@ export function homeDisplay() : HTMLElement {
   }) as HTMLInputElement
   salaryInputPanel.appendChild(salaryInput)
   setDomEvents(salaryInput, {
-    input: () => emitSignal(refreshTaxCalc, undefined)
+    input: () =>{
+      salaryInput.value = salaryInput.value.replaceAll(/[^\d]+/g, "")
+      emitSignal(refreshTaxCalc, undefined)
+    }
   })
   
   const paymentNumberInput = uiComponent({
