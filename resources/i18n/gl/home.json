@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
 	"app.name": "Salary",
 	"title": "Inicio",
 	"description": "Introduce o teu salario anual e selecciona o número de pagas.",
@@ -9,4 +10,15 @@
 	"years": "Anos",
 	"regions": "Rexións",
 	"languages": "Idiomas"
+=======
+    "appName" : "Salary",
+    "title" : "Inicio",
+    "netSalary" : "Salario bruto",
+    "salary" : "Salario",
+    "extra" : "Extra",
+    "incomeTax" : "IRPF",
+    "years" : "Años",
+    "regions" : "Rexións",
+    "languages" : "Idiomas"
+>>>>>>> origin/dev
 }
