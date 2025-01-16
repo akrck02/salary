@@ -1,12 +1,12 @@
 {
-	"app.name": "Salary",
-	"title": "Inicio",
-	"description": "Introduce o teu salario anual e selecciona o número de pagas.",
-	"salary.gross": "Salario bruto",
-	"salary": "Salario",
-	"extra": "Extra",
-	"pit": "IRPF",
-	"years": "Anos",
-	"regions": "Rexións",
-	"languages": "Idiomas"
+  "app.name": "Salary",
+  "title": "Inicio",
+  "description": "Introduce o teu salario anual e selecciona o número de pagas.",
+  "salary.gross": "Salario bruto",
+  "salary": "Salario",
+  "extra": "Extra",
+  "pit": "IRPF",
+  "years": "Anos",
+  "regions": "Rexións",
+  "languages": "Idiomas"
 }

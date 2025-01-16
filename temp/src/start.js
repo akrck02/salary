@@ -577,6 +577,7 @@
         setDomEvents(salaryInput, {
             input: () => {
                 salaryInput.value = salaryInput.value.replaceAll(/[^\d]+/g, "");
+                document.title = `${getText(TextBundles.Home, HomeTexts.AppName)} - ${salaryInput.value || "0"}€`;
                 emitSignal(refreshTaxCalc, undefined);
             }
         });
@@ -667,10 +668,10 @@
     const reloadTextSignal = setSignal();
     connectToSignal(reloadTextSignal, reloadText);
     async function reloadText() {
+        document.title = `${getText(TextBundles.Home, HomeTexts.AppName)} - ${getText(TextBundles.Home, HomeTexts.Title)}`;
         const elements = document.querySelectorAll("*[data-i18n]");
         for (const element of elements) {
             const parts = element.getAttribute("data-i18n").split(":");
-            console.log(parts);
             element.textContent = getText(parts[0], parts[1]);
         }
     }
@@ -862,6 +863,7 @@
         await loadTextBundle(TextBundles.Home);
         await loadTextBundle(TextBundles.Regions);
         await loadTextBundle(TextBundles.Languages);
+        document.title = `${getText(TextBundles.Home, HomeTexts.AppName)} - ${getText(TextBundles.Home, HomeTexts.Title)}`;
         const homeView = uiComponent({
             type: Html.View,
             id: ID,
