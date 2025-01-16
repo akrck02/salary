@@ -1,4 +1,4 @@
 {
-    "cannotLoadTax" : "Could not load tax information",
-    "salaryTooHigh" : "You are too rich to use this service"
+	"cannot.load.tax": "Could not load tax information",
+	"salary.too.high": "You are too rich to use this service"
 }
