@@ -1,13 +1,6 @@
 {
-<<<<<<< HEAD
-	"spanish": "Spanish",
-	"english": "English",
-	"galician": "Galician",
-	"catala": "Català"
+  "spanish": "Spanish",
+  "english": "English",
+  "galician": "Galician",
+  "catala": "Català"
 }
-=======
-    "spanish": "Spanish",
-    "english": "English",
-    "galician": "Galician"
-}
->>>>>>> origin/dev

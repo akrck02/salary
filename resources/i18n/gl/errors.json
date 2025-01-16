@@ -1,10 +1,4 @@
 {
-<<<<<<< HEAD
-	"cannot.load.tax": "Non se puido cargar o modelo de impostos",
-	"salary.too.high": "Es demasiado rico para este servizo."
+  "cannot.load.tax": "Non se puido cargar o modelo de impostos",
+  "salary.too.high": "Es demasiado rico para este servizo."
 }
-=======
-    "cannotLoadTax" : "Non se puido cargar o modelo de impostos",
-    "salaryTooHigh" : "Es demasiado rico para este servizo."
-}
->>>>>>> origin/dev

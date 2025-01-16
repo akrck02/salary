@@ -1,24 +1,12 @@
 {
-<<<<<<< HEAD
-	"app.name": "Salary",
-	"title": "Inicio",
-	"description": "Introduce o teu salario anual e selecciona o número de pagas.",
-	"salary.gross": "Salario bruto",
-	"salary": "Salario",
-	"extra": "Extra",
-	"pit": "IRPF",
-	"years": "Anos",
-	"regions": "Rexións",
-	"languages": "Idiomas"
-=======
-    "appName" : "Salary",
-    "title" : "Inicio",
-    "netSalary" : "Salario bruto",
-    "salary" : "Salario",
-    "extra" : "Extra",
-    "incomeTax" : "IRPF",
-    "years" : "Años",
-    "regions" : "Rexións",
-    "languages" : "Idiomas"
->>>>>>> origin/dev
+  "app.name": "Salary",
+  "title": "Inicio",
+  "description": "Introduce o teu salario anual e selecciona o número de pagas.",
+  "salary.gross": "Salario bruto",
+  "salary": "Salario",
+  "extra": "Extra",
+  "pit": "IRPF",
+  "years": "Anos",
+  "regions": "Rexións",
+  "languages": "Idiomas"
 }

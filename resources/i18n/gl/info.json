@@ -1,8 +1,3 @@
 {
-<<<<<<< HEAD
-	"tax.load.success": "Modelo de impostos cargado"
+  "tax.load.success": "Modelo de impostos cargado"
 }
-=======
-    "taxLoadedSuccessfully": "Impostos cargados correctamente"
-}
->>>>>>> origin/dev
