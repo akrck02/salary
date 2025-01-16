@@ -1,9 +1,9 @@
-import { TextBundles } from "../../core/texts.js"
+import { HomeTexts, TextBundles } from "../../core/texts.js"
 import { isSmallDevice } from "../../lib/browser.js"
 import { BubbleUI } from "../../lib/bubble.js"
 import { uiComponent } from "../../lib/dom.js"
 import { Html } from "../../lib/html.js"
-import { loadTextBundle } from "../../lib/i18n.js"
+import { getText, loadTextBundle } from "../../lib/i18n.js"
 import { loadTaxModels } from "../../services/taxes.js"
 import { AVAILABLE_REGIONS, AVAILABLE_YEARS } from "./home.core.js"
 import { homeDisplay } from "./home.display.js"
@@ -16,10 +16,12 @@ const MOBILE_CLASS = "mobile";
  * Show home view
  */ 
 export async function showHomeView(_params : string[], container : HTMLElement) {
-    
+
   await loadTextBundle(TextBundles.Home)
   await loadTextBundle(TextBundles.Regions)
   await loadTextBundle(TextBundles.Languages)
+
+  document.title = `${getText(TextBundles.Home, HomeTexts.AppName)} - ${getText(TextBundles.Home, HomeTexts.Title)}`
 
   const homeView = uiComponent({
     type : Html.View,

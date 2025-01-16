@@ -82,6 +82,7 @@ export function homeDisplay() : HTMLElement {
   setDomEvents(salaryInput, {
     input: () =>{
       salaryInput.value = salaryInput.value.replaceAll(/[^\d]+/g, "")
+      document.title = `${getText(TextBundles.Home, HomeTexts.AppName)} - ${salaryInput.value || "0"}€`
       emitSignal(refreshTaxCalc, undefined)
     }
   })
