@@ -1,8 +1,8 @@
 {
 	"app.name": "Salari",
 	"title": "Inici",
-	"description": "Introdueix el teu salari anual i selecciona el nombre de pagues.",
-	"salary.gross": "Salari brut",
+	"description": "Introdueix el teu salari brut anual i selecciona el nombre de pagues.",
+	"salary.gross": "Calculadora de salari",
 	"salary": "Salari",
 	"extra": "Extra",
 	"pit": "IRPF",

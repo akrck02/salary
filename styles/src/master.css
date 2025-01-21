@@ -589,7 +589,10 @@ height: 100vh;
 padding: 1rem; 
 font-size: 1.6rem; 
 } 
-view#home h1, p, b , footer{ 
+view#home h1, 
+p, 
+b, 
+footer { 
 text-align: center; 
 } 
 view#home h1 { 
@@ -597,14 +600,14 @@ font-weight: 400;
 font-size: 2.2rem; 
 width: 100%; 
 } 
-view#home h1#main-title{ 
+view#home h1#main-title { 
 font-size: 2.15rem; 
 margin-bottom: 1.25rem; 
 text-align: left; 
-max-width: 17rem; 
+max-width: 18rem; 
 } 
 view#home * { 
-transition: .35s; 
+transition: 0.35s; 
 user-select: none; 
 } 
 view#home.showing { 
@@ -622,21 +625,21 @@ height: 500px;
 view#home #result { 
 text-align: left; 
 border-radius: 1rem; 
-margin-top: .1rem; 
+margin-top: 0.1rem; 
 padding: 20px; 
 width: 100%; 
 max-width: 19rem; 
 font-size: 1.2rem; 
 } 
 view#home div#salary-input-panel { 
-margin-bottom: .1rem; 
+margin-bottom: 0.1rem; 
 } 
 view#home input#salary { 
 border-radius: 1rem; 
 border: none; 
 width: calc(100% - 5.75rem); 
 max-width: calc(100% - 4.75rem); 
-padding: .25rem .75rem; 
+padding: 0.25rem 0.75rem; 
 height: 3rem; 
 font-size: 1.05rem; 
 } 
@@ -645,30 +648,30 @@ border-radius: 3rem;
 width: 3rem; 
 height: 3rem; 
 box-shadow: none; 
-padding: .55rem; 
-margin: 0 .35rem; 
+padding: 0.55rem; 
+margin: 0 0.35rem; 
 min-width: 3rem; 
-outline: .1rem solid transparent; 
+outline: 0.1rem solid transparent; 
 } 
 view#home button { 
-border-radius: .35rem; 
+border-radius: 0.35rem; 
 border: none; 
-padding: .5rem .75rem; 
+padding: 0.5rem 0.75rem; 
 cursor: pointer; 
 } 
 view#home span.value-data { 
-margin-bottom: .5rem; 
+margin-bottom: 0.5rem; 
 } 
 view#home span.value-data label.label { 
 font-size: 1.1rem; 
 } 
 view#home span.value-data span.value { 
 border-radius: 1rem; 
-padding: .2rem .75rem; 
+padding: 0.2rem 0.75rem; 
 font-size: 1rem; 
-margin-left: .5rem; 
+margin-left: 0.5rem; 
 user-select: none; 
-transition: .15s; 
+transition: 0.15s; 
 } 
 view#home #theme-selector { 
 display: none; 
@@ -677,9 +680,9 @@ view#home #theme-selector.show {
 display: flex; 
 } 
 view#home .theme-button { 
-min-width:3rem; 
-min-height:3rem; 
-border-radius: .7rem; 
+min-width: 3rem; 
+min-height: 3rem; 
+border-radius: 0.7rem; 
 } 
 view#home .theme { 
 position: absolute; 
@@ -694,7 +697,7 @@ font-size: 1rem;
 } 
 view#home.mobile footer { 
 bottom: 4rem; 
-font-size: .7rem; 
+font-size: 0.7rem; 
 } 
 view#home #calc-menu { 
 border-radius: 1rem; 
@@ -715,7 +718,7 @@ margin-top: 0.2rem;
 view#home #calc-menu .options-title { 
 font-size: 1.25rem; 
 font-weight: bold; 
-margin: 1rem .4rem; 
+margin: 1rem 0.4rem; 
 width: calc(100% - 2rem); 
 } 
 view#home.mobile #calc-menu .options-title { 
@@ -726,22 +729,22 @@ justify-content: left;
 flex-wrap: wrap; 
 } 
 view#home .menu-option { 
-margin-bottom: .5rem; 
+margin-bottom: 0.5rem; 
 cursor: pointer; 
 min-width: 6rem; 
-width: calc(60% - .5rem); 
-margin-left: .15%; 
+width: calc(60% - 0.5rem); 
+margin-left: 0.15%; 
 box-shadow: none; 
 font-size: 1rem; 
-margin: .25rem; 
+margin: 0.25rem; 
 height: 3.5rem; 
 border-radius: 5rem; 
-padding: .5rem 2rem; 
+padding: 0.5rem 2rem; 
 } 
 view#home .menu-option.selected { 
 width: 97%; 
 background: var(--primary-color); 
-color : var(--on-primary-color); 
+color: var(--on-primary-color); 
 } 
 /** 
 MOBILE STYLES 
@@ -762,36 +765,36 @@ view#home.mobile #calc-frame {
 align-items: center; 
 justify-content: flex-start; 
 } 
-view#home.mobile #calc-menu{ 
+view#home.mobile #calc-menu { 
 position: fixed; 
 border-radius: 2rem 2rem 0 0; 
-padding: 3rem 1.5rem 0 1.5rem ; 
+padding: 3rem 1.5rem 0 1.5rem; 
 z-index: 999; 
 height: 87%; 
 width: 100%; 
 top: 95%; 
-box-shadow: 0rem 0rem 1rem rgba(0,0,0,.1); 
-transition: top .5s ease-out; 
+box-shadow: 0rem 0rem 1rem rgba(0, 0, 0, 0.1); 
+transition: top 0.5s ease-out; 
 } 
-:root[data-theme=light] view#home.mobile #calc-menu { 
+:root[data-theme="light"] view#home.mobile #calc-menu { 
 background: var(--background); 
 } 
  
 view#home.mobile #calc-menu::after { 
-content: ''; 
+content: ""; 
 position: absolute; 
 top: 1rem; 
 left: 50%; 
 transform: translateX(-50%); 
 width: 4rem; 
-height: .25rem; 
+height: 0.25rem; 
 background: var(--surface-6); 
-opacity: .2; 
+opacity: 0.2; 
 border-radius: 1rem; 
 cursor: pointer; 
-transition: .5s; 
+transition: 0.5s; 
 } 
-view#home.mobile #calc-menu.show{ 
+view#home.mobile #calc-menu.show { 
 top: 13%; 
 } 
 view#home.mobile #calc-menu .options-title { 
@@ -802,7 +805,7 @@ flex-wrap: wrap;
 } 
 view#home.mobile #calc-menu .button-container .menu-option { 
 font-size: 1rem; 
-margin: .25rem; 
+margin: 0.25rem; 
 height: 3.5rem; 
 border-radius: 5rem; 
 padding: 0rem; 
@@ -812,7 +815,8 @@ min-width: 5rem;
 max-width: 25rem; 
 width: 100%; 
 } 
-view#home.mobile #calc-menu .button-container .year-option , view#home.mobile #calc-menu .button-container .lang-option { 
+view#home.mobile #calc-menu .button-container .year-option, 
+view#home.mobile #calc-menu .button-container .lang-option { 
 min-width: 5rem; 
 max-width: 31%; 
 } 

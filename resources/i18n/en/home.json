@@ -1,8 +1,8 @@
 {
 	"app.name": "Salary",
 	"title": "Home",
-	"description": "Enter your annual salary and select the number of payments.",
-	"salary.gross": "Gross salary",
+	"description": "Enter your annual gross salary and select the number of payments.",
+	"salary.gross": "Salary calculator",
 	"salary": "Salary",
 	"extra": "Extra",
 	"pit": "PIT",
