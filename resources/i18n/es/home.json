@@ -1,8 +1,8 @@
 {
 	"app.name": "Salary",
 	"title": "Inicio",
-	"description": "Introduce tu salario anual y selecciona el número de pagas.",
-	"salary.gross": "Salario bruto",
+	"description": "Introduce tu salario bruto anual y selecciona el número de pagas.",
+	"salary.gross": "Calculadora de salario",
 	"salary": "Salario",
 	"extra": "Extra",
 	"pit": "IRPF",
