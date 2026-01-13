@@ -72,12 +72,10 @@
     const TextBundles = {
         Errors: "errors",
         Home: "home",
-        Info: "info",
         Languages: "languages",
         Regions: "regions"
     };
     const ErrorTexts = {
-        CannotLoadTax: "cannot.load.tax",
         SalaryTooHigh: "salary.too.high"
     };
     const HomeTexts = {
@@ -457,7 +455,7 @@
 
     // ---------- constants ------------
     const AVAILABLE_REGIONS = ["paisvasco"];
-    const AVAILABLE_YEARS = [2025, 2024, 2023, 2022];
+    const AVAILABLE_YEARS = [2026, 2025, 2024, 2023, 2022];
     const AVAILABLE_PAYMENT_NUMBERS = [14, 12];
     const MAX_SALARY = 1000000;
     const MIN_SALARY = 0;
