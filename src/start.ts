@@ -1,3 +1,4 @@
+import { setCurrentLanguage } from "./lib/i18n.js";
 import { setRoute, showRoute } from "./lib/router.js";
 import { showHomeView } from "./views/home/home.js";
 
@@ -15,6 +16,7 @@ window.onload = start;
 
 /** Start the web app */
 async function start() {
+  await setCurrentLanguage(navigator.language,true)
   setRoute("", showHomeView)
   showRoute(window.location.hash.slice(1).toLowerCase(), document.body)
 }
