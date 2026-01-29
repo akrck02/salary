@@ -165,7 +165,6 @@
     const TextBundles = {
         Errors: "errors",
         Home: "home",
-        Languages: "languages",
         Regions: "regions"
     };
     const ErrorTexts = {
@@ -830,7 +829,6 @@
             const button = uiComponent({
                 type: Html.Button,
                 text: Languages[language].name,
-                // data : { i18n : `${TextBundles.Languages}:${language.toLowerCase()}`},
                 classes: [MENU_OPTION_CLASS, LANG_OPTION_CLASS]
             });
             if (Languages[language].locales.includes(navigator.language)) {
@@ -862,7 +860,6 @@
     async function showHomeView(_params, container) {
         await loadTextBundle(TextBundles.Home);
         await loadTextBundle(TextBundles.Regions);
-        await loadTextBundle(TextBundles.Languages);
         document.title = `${getText(TextBundles.Home, HomeTexts.AppName)} - ${getText(TextBundles.Home, HomeTexts.Title)}`;
         const homeView = uiComponent({
             type: Html.View,
