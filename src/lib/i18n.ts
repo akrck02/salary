@@ -15,11 +15,11 @@ export interface ILanguage {
  * INFO: Add languages here as needed 
  */
 export const Languages = {
-  Spanish: { name: "spanish", main: "es", locales: ["es", "es-ES"] },
-  English: { name: "english", main: "en", locales: ["en", "en-US", "en-GB"] },
-  Galician: { name: "galician", main : "gl", locales: ["gl", "gl-ES"] },
-  Catala: { name: "catala", main:"ca", locales: ["ca","ca-ES"] },
-  Euskera: { name: "euskera", main:"eu", locales: ["eu","eu-ES"] }
+  Spanish: { name: "Español", main: "es", locales: ["es", "es-ES"] },
+  English: { name: "English", main: "en", locales: ["en", "en-US", "en-GB"] },
+  Galician: { name: "Galego", main : "gl", locales: ["gl", "gl-ES"] },
+  Catala: { name: "Català", main:"ca", locales: ["ca","ca-ES"] },
+  Euskera: { name: "Euskera", main:"eu", locales: ["eu","eu-ES"] }
 }
 
 /** This language will be used if no other language is set */
