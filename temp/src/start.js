@@ -1,6 +1,99 @@
 (function () {
     'use strict';
 
+    /**
+     * Languages that can be used in the application
+     * @author akrck02
+     *
+     * INFO: Add languages here as needed
+     */
+    const Languages = {
+        Spanish: { name: "spanish", main: "es", locales: ["es", "es-ES"] },
+        English: { name: "english", main: "en", locales: ["en", "en-US", "en-GB"] },
+        Galician: { name: "galician", main: "gl", locales: ["gl", "gl-ES"] },
+        Catala: { name: "catala", main: "ca", locales: ["ca", "ca-ES"] },
+        Euskera: { name: "euskera", main: "eu", locales: ["eu", "eu-ES"] }
+    };
+    /** This language will be used if no other language is set */
+    const DEFAULT_LANGUAGE = Languages.Spanish;
+    /** Set here the available languages for the app **/
+    const AVAILABLE_LANGUAGES = [
+        Languages.Spanish,
+        Languages.English,
+        Languages.Galician,
+        Languages.Catala,
+        Languages.Euskera
+    ];
+    /** This is the path of the i18n file structure **/
+    const I18N_PATH = "./resources/i18n";
+    /** This is the buffer **/
+    const buffer$1 = new Map();
+    /** Current language for the web app **/
+    let currentLanguage = Languages.English;
+    /**
+     * Set current language by locale
+     * @param locale The locale to get the language for
+     * @param reloadBundles (Optional) Reload the existing bundles for current language
+     * @author akrck02
+     */
+    async function setCurrentLanguage(locale, reloadBundles = false) {
+        // Set language
+        if (undefined === locale) {
+            currentLanguage = DEFAULT_LANGUAGE;
+        }
+        else {
+            currentLanguage = AVAILABLE_LANGUAGES.find((lang) => lang.locales.includes(locale));
+            if (undefined == currentLanguage) {
+                console.warn(`Language for locale ${locale} not found in available languages.`);
+                currentLanguage = DEFAULT_LANGUAGE;
+            }
+        }
+        // If the reload is on and buffer already has bundles, try to get them
+        if (true == reloadBundles && 0 < buffer$1.size) {
+            for (const bundleId of buffer$1.keys()) {
+                await loadTextBundle(bundleId, true);
+            }
+        }
+    }
+    /**
+     * Load a text bundle if needed
+     * @param id The bundle id
+     * @param maxAttemps (Optional) The max number of attemps, one by default
+     * @author akrck02
+     */
+    async function loadTextBundle(id, reload = false, maxAttemps = 1) {
+        // If the bundle exists, do nothing
+        if (false == reload && buffer$1.has(id))
+            return;
+        // Try to get the bundle retrying if necessary
+        let language = undefined;
+        for (let attemps = 0; attemps < maxAttemps && undefined == language; attemps++) {
+            language = await fetch(`${I18N_PATH}/${currentLanguage.main}/${id}.json`).then(res => res.json());
+        }
+        // If nothing was found, return
+        if (undefined == language)
+            return;
+        // Add the bundle to buffer
+        buffer$1.set(id, language);
+    }
+    /**
+     * Get text from a bundle
+     * @param bundleId The bundle id to take the text from
+     * @param textId The text id
+     * @author akrck02
+     */
+    function getText(bundleId, textId) {
+        // If the bundle does not exists inside the buffer, return empty
+        if (false == buffer$1.has(bundleId))
+            return "";
+        // If the text does not exist in the bundle, return empty
+        const bundle = buffer$1.get(bundleId);
+        if (false == bundle.hasOwnProperty(textId))
+            return "";
+        // Return the text
+        return bundle[textId];
+    }
+
     const paths = new Map();
     let homeHandler = async (_p, c) => { c.innerHTML = "Home page."; };
     let notFoundHandler = async (_p, c) => { c.innerHTML = "Page not found."; };
@@ -240,97 +333,6 @@
         Html["RadialGradient"] = "radialGradient";
         Html["Filter"] = "filter";
     })(Html || (Html = {}));
-
-    /**
-     * Languages that can be used in the application
-     * @author akrck02
-     *
-     * INFO: Add languages here as needed
-     */
-    const Languages = {
-        Spanish: { name: "spanish", main: "es", locales: ["es", "es-ES"] },
-        English: { name: "english", main: "en", locales: ["en", "en-US", "en-GB"] },
-        Galician: { name: "galician", main: "gl", locales: ["gl", "gl-ES"] },
-        Catala: { name: "catala", main: "ca", locales: ["ca", "ca-ES"] }
-    };
-    /** This language will be used if no other language is set */
-    const DEFAULT_LANGUAGE = Languages.Spanish;
-    /** Set here the available languages for the app **/
-    const AVAILABLE_LANGUAGES = [
-        Languages.Spanish,
-        Languages.English,
-        Languages.Galician,
-        Languages.Catala
-    ];
-    /** This is the path of the i18n file structure **/
-    const I18N_PATH = "./resources/i18n";
-    /** This is the buffer **/
-    const buffer$1 = new Map();
-    /** Current language for the web app **/
-    let currentLanguage = Languages.English;
-    /**
-     * Set current language by locale
-     * @param locale The locale to get the language for
-     * @param reloadBundles (Optional) Reload the existing bundles for current language
-     * @author akrck02
-     */
-    async function setCurrentLanguage(locale, reloadBundles = false) {
-        // Set language
-        if (undefined === locale) {
-            currentLanguage = DEFAULT_LANGUAGE;
-        }
-        else {
-            currentLanguage = AVAILABLE_LANGUAGES.find((lang) => lang.locales.includes(locale));
-            if (undefined == currentLanguage) {
-                console.warn(`Language for locale ${locale} not found in available languages.`);
-                currentLanguage = DEFAULT_LANGUAGE;
-            }
-        }
-        // If the reload is on and buffer already has bundles, try to get them
-        if (true == reloadBundles && 0 < buffer$1.size) {
-            for (const bundleId of buffer$1.keys()) {
-                await loadTextBundle(bundleId, true);
-            }
-        }
-    }
-    /**
-     * Load a text bundle if needed
-     * @param id The bundle id
-     * @param maxAttemps (Optional) The max number of attemps, one by default
-     * @author akrck02
-     */
-    async function loadTextBundle(id, reload = false, maxAttemps = 1) {
-        // If the bundle exists, do nothing
-        if (false == reload && buffer$1.has(id))
-            return;
-        // Try to get the bundle retrying if necessary
-        let language = undefined;
-        for (let attemps = 0; attemps < maxAttemps && undefined == language; attemps++) {
-            language = await fetch(`${I18N_PATH}/${currentLanguage.main}/${id}.json`).then(res => res.json());
-        }
-        // If nothing was found, return
-        if (undefined == language)
-            return;
-        // Add the bundle to buffer
-        buffer$1.set(id, language);
-    }
-    /**
-     * Get text from a bundle
-     * @param bundleId The bundle id to take the text from
-     * @param textId The text id
-     * @author akrck02
-     */
-    function getText(bundleId, textId) {
-        // If the bundle does not exists inside the buffer, return empty
-        if (false == buffer$1.has(bundleId))
-            return "";
-        // If the text does not exist in the bundle, return empty
-        const bundle = buffer$1.get(bundleId);
-        if (false == bundle.hasOwnProperty(textId))
-            return "";
-        // Return the text
-        return bundle[textId];
-    }
 
     const TAX_DATA_PATH = "resources/json/taxes/";
     const DEFAULT_PAYMENT_NUMBER = 14;
@@ -890,6 +892,7 @@
     window.onload = start;
     /** Start the web app */
     async function start() {
+        await setCurrentLanguage(navigator.language, true);
         setRoute("", showHomeView);
         showRoute(window.location.hash.slice(1).toLowerCase(), document.body);
     }
