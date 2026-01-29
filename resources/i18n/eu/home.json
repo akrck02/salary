@@ -1,0 +1,12 @@
+{
+	"app.name": "Salary",
+	"title": "Hasiera",
+	"description": "Sartu zure soldata gordina eta aukeratu ordainsari-kopurua.",
+	"salary.gross": "Soldata kalkulagailua",
+	"salary": "Soldata",
+	"extra": "Aparteko",
+	"pit": "PFEZ",
+	"years": "Urteak",
+	"regions": "Eskualdeak",
+	"languages": "Hizkuntzak"
+}
