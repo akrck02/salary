@@ -8,11 +8,11 @@
      * INFO: Add languages here as needed
      */
     const Languages = {
-        Spanish: { name: "spanish", main: "es", locales: ["es", "es-ES"] },
-        English: { name: "english", main: "en", locales: ["en", "en-US", "en-GB"] },
-        Galician: { name: "galician", main: "gl", locales: ["gl", "gl-ES"] },
-        Catala: { name: "catala", main: "ca", locales: ["ca", "ca-ES"] },
-        Euskera: { name: "euskera", main: "eu", locales: ["eu", "eu-ES"] }
+        Spanish: { name: "Español", main: "es", locales: ["es", "es-ES"] },
+        English: { name: "English", main: "en", locales: ["en", "en-US", "en-GB"] },
+        Galician: { name: "Galego", main: "gl", locales: ["gl", "gl-ES"] },
+        Catala: { name: "Català", main: "ca", locales: ["ca", "ca-ES"] },
+        Euskera: { name: "Euskera", main: "eu", locales: ["eu", "eu-ES"] }
     };
     /** This language will be used if no other language is set */
     const DEFAULT_LANGUAGE = Languages.Spanish;
@@ -829,8 +829,8 @@
         for (const language in Languages) {
             const button = uiComponent({
                 type: Html.Button,
-                text: language,
-                data: { i18n: `${TextBundles.Languages}:${language.toLowerCase()}` },
+                text: Languages[language].name,
+                // data : { i18n : `${TextBundles.Languages}:${language.toLowerCase()}`},
                 classes: [MENU_OPTION_CLASS, LANG_OPTION_CLASS]
             });
             if (Languages[language].locales.includes(navigator.language)) {
