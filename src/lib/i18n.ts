@@ -18,7 +18,8 @@ export const Languages = {
   Spanish: { name: "spanish", main: "es", locales: ["es", "es-ES"] },
   English: { name: "english", main: "en", locales: ["en", "en-US", "en-GB"] },
   Galician: { name: "galician", main : "gl", locales: ["gl", "gl-ES"] },
-  Catala: { name: "catala", main:"ca", locales: ["ca","ca-ES"] }
+  Catala: { name: "catala", main:"ca", locales: ["ca","ca-ES"] },
+  Euskera: { name: "euskera", main:"eu", locales: ["eu","eu-ES"] }
 }
 
 /** This language will be used if no other language is set */
@@ -29,7 +30,8 @@ const AVAILABLE_LANGUAGES = [
   Languages.Spanish,
   Languages.English,
   Languages.Galician,
-  Languages.Catala
+  Languages.Catala,
+  Languages.Euskera
 ]
 
 /** This is the path of the i18n file structure **/
