@@ -19,7 +19,6 @@ export async function showHomeView(_params : string[], container : HTMLElement) 
 
   await loadTextBundle(TextBundles.Home)
   await loadTextBundle(TextBundles.Regions)
-  await loadTextBundle(TextBundles.Languages)
 
   document.title = `${getText(TextBundles.Home, HomeTexts.AppName)} - ${getText(TextBundles.Home, HomeTexts.Title)}`
 

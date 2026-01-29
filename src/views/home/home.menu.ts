@@ -196,7 +196,6 @@ function languageSelectionSection() : HTMLElement {
     const button = uiComponent({
       type : Html.Button,
       text : Languages[language].name,
-     // data : { i18n : `${TextBundles.Languages}:${language.toLowerCase()}`},
       classes : [MENU_OPTION_CLASS, LANG_OPTION_CLASS]
     })
 

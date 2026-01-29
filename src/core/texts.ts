@@ -29,11 +29,6 @@ export const InfoTexts = {
   TaxLoadedSuccessfully : "tax.load.success"
 }
 
-export const LanguageTexts = {
-  English : "english",
-  Spanish : "spanish"
-}
-
 export const RegionTexts = {
   BasqueCountry : "basque.country"
 }
